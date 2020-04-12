@@ -88,7 +88,6 @@ func main() {
 			devUserRepo.DB.Find(&track)
 			c.JSON(200, track)
 		})
-
 		rDev.GET("/tracktag", func(c *gin.Context) {
 			track := []domain.UserTrackTag{}
 			devUserRepo.DB.Find(&track)
@@ -98,8 +97,8 @@ func main() {
 		rDev.GET("/userdata", func(c *gin.Context) {
 		})
 		rDev.GET("/debug", userProfileAppImpl.Debug)
-		rDev.GET("/hello", func(c *gin.Context) {
-			c.String(200, "hello world")
+		rDev.GET("/deptest", func(c *gin.Context) {
+			c.String(200, "deploy test")
 		})
 	}
 
