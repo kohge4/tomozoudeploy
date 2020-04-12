@@ -1,0 +1,36 @@
+version: '3'
+services:
+  env:
+    image: golang:1.13
+    environment:
+      - GO111MODULE=on
+      - SPOTIFY_CONSUMER_KEY
+      - SPOTIFY_CONSUMER_SECRET
+      - SPOTIFY_ACCESS_TOKEN
+      - SPOTIFY_ACCESS_TOKEN_SECRET
+      - GOOGLE_TRANSLATION_API_KEY
+      - SENTRY_DSN=https://6e739ca66ff94991844e3afeeed3c7dc@sentry.io/5174133
+      - DEBUG=true
+      - DATABASE_URI=root:@(db:3306)/tomozou?charset=utf8&parseTime=True
+    volumes:
+      - ./:/opt/app
+    working_dir: /opt/app/tomozou
+    ports:
+      - "8000:8080"
+    command: go run /opt/app/tomozou/main.go
+    links: 
+      - db:db 
+  db:
+    image: mysql:5.6 
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --general-log-file=/var/log/mysql/query.log
+    restart: unless-stopped 
+    expose:
+      - 3306
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes: 
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - db-volume:/var/lib/mysql
+  
+volumes:
+  db-volume:
