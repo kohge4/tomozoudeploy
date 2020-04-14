@@ -2,7 +2,7 @@
 
 ## cloud run に デプロイしたいとき 
 - docker build -t ongk .
-- docker run -p 8000:8080 ongk  (docker os 上の 8080 ポートを ローカルマシンの 8000 ポートへマウント)
+- (デバッグ docker run -p 8000:8080 ongk  (docker os 上の 8080 ポートを ローカルマシンの 8000 ポートへマウント))
 - docker tag ongk gcr.io/ongakuconnection/ongkconn:latest
 - docker push gcr.io/ongakuconnection/ongkconn:latest
 
