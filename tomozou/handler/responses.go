@@ -3,6 +3,7 @@ package handler
 import (
 	"time"
 	"tomozou/domain"
+	"tomozou/settings"
 )
 
 type Response struct {
@@ -34,8 +35,55 @@ func NewMyTrackResponse(track *domain.UserTrackTag) *MyTrackResponse {
 	}
 }
 
-func newTrackURL(id string) string {
-	return ""
+type TrackTimeLineResponse struct {
+	Items []TrackResponse `json:"items"`
+	//Offset int
+	//Limit  int
+	//LastID int
+	// 本来は 順番に表示させるやつやりたい
+	Length int `json:"length"`
+	//Filter string
+}
+
+type TrackResponse struct {
+	TrackID      int       `json:"track_id"`
+	TrackURL     string    `json:"track_url"`
+	SpotifyID    string    `json:"spotify_id"`
+	AppleID      string    `json:"apple_id"`
+	UserID       int       `json:"user_id"`
+	UserName     string    `json:"user_name"`
+	UserImageURL string    `json:"user_image_url"`
+	CreatedAt    time.Time `json:"created_at"`
+}
+
+func NewTrackTimeLineResponse(u *UserProfileApplicationImpl, trackTags []domain.UserTrackTag) *TrackTimeLineResponse {
+	var items []TrackResponse
+	for _, tag := range trackTags {
+		items = append(items, NewTrackResponse(u, tag))
+	}
+	return &TrackTimeLineResponse{
+		Items:  items,
+		Length: len(trackTags),
+	}
+}
+
+func NewTrackResponse(u *UserProfileApplicationImpl, trackTag domain.UserTrackTag) TrackResponse {
+	user, _ := u.UseCase.UserRepository.ReadByID(trackTag.UserID)
+	return TrackResponse{
+		TrackID:      trackTag.TrackID,
+		TrackURL:     newTrackURL(trackTag.TrackSocialID),
+		SpotifyID:    trackTag.TrackSocialID,
+		AppleID:      "",
+		UserID:       trackTag.UserID,
+		UserName:     user.Name,
+		UserImageURL: user.Image,
+		CreatedAt:    trackTag.CreatedAt,
+	}
+}
+
+func newTrackURL(socialID string) string {
+	url := settings.SpotifyTrackURL + socialID
+	return url
 }
 
 type ChatResponse struct {

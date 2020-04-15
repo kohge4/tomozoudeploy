@@ -122,6 +122,15 @@ func (repo *SpotifyItemDBRepository) ReadUserTrackTagByUserID(userID int) ([]dom
 	return userTrackTags, nil
 }
 
+func (repo *SpotifyItemDBRepository) ReadUserTrackTagByTagName(tagName string) ([]domain.UserTrackTag, error) {
+	userTrackTags := []domain.UserTrackTag{}
+	repo.DB.Where("tag_name = ?", tagName).Find(&userTrackTags)
+	if len(userTrackTags) == 0 {
+		return userTrackTags, fmt.Errorf("nil error")
+	}
+	return userTrackTags, nil
+}
+
 func (repo *SpotifyItemDBRepository) DeleteAllUserArtistTagsByUserID(userID int) error {
 	tag := domain.UserArtistTag{}
 	repo.DB.Where("user_id LIKE ?", userID).Delete(&tag)

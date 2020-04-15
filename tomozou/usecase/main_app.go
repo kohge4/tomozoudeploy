@@ -165,6 +165,14 @@ func (u UserProfileApplication) DisplayUsersByArtistName(artistName string) (int
 	return users, nil
 }
 
+func (u UserProfileApplication) TrackTimeLine() ([]domain.UserTrackTag, error) {
+	trackTags, err := u.ItemRepository.ReadUserTrackTagByTagName("nowplaying")
+	if err != nil {
+		return nil, err
+	}
+	return trackTags, nil
+}
+
 /*
 // 実装開始　追加機能
 func (u UserProfileApplication) AddUserArtistTagComment(tagID int, comment string) (interface{}, error) {

@@ -14,8 +14,8 @@ import (
 
 func main() {
 	DRIVER := "mysql"
-	DSN := "root:@(db:3306)/tomozou?charset=utf8&parseTime=True"
-	//DSN := "root:@unix(/cloudsql/ongakuconnection:asia-northeast1:ongkdb)/tomozoudb?charset=utf8&parseTime=True"
+	//DSN := "root:@(db:3306)/tomozou?charset=utf8&parseTime=True"
+	DSN := "root:@unix(/cloudsql/ongakuconnection:asia-northeast1:ongkdb)/tomozoudb?charset=utf8&parseTime=True"
 	//"ユーザー名:パスワード@unix(/cloudsql/インスタンス接続名)/DB名"
 
 	gormConn, _ := datastore.GormConn(DRIVER, DSN)
@@ -43,6 +43,7 @@ func main() {
 
 	r.GET("/search/user/artistid/:artistID", userProfileAppImpl.SearchUsersByArtistID)
 	r.GET("/search/user/artistname", userProfileAppImpl.SearchUsersByArtistName)
+	r.GET("/timeline", userProfileAppImpl.TrackTimeLine)
 
 	// Spotify ログイン処理用エンドポイント
 	rSpo := r.Group("/spotify")
@@ -94,6 +95,7 @@ func main() {
 			c.JSON(200, track)
 		})
 		rDev.GET("/mytrack", userProfileAppImpl.MyTrack)
+		rDev.GET("/timeline", userProfileAppImpl.TrackTimeLine)
 		rDev.GET("/userdata", func(c *gin.Context) {
 		})
 		rDev.GET("/debug", userProfileAppImpl.Debug)
