@@ -62,11 +62,6 @@ func (u *UserProfileApplicationImpl) Callback(c *gin.Context) {
 	}
 	c.Set("userid", user.ID)
 	c.Set("user_name", user.Name)
-	/*
-		fmt.Println("UserCheck")
-		println(user.Name)
-		println(user.ID)
-	*/
 	u.AuthMiddleware.LoginHandler(c)
 }
 
@@ -172,5 +167,15 @@ func (u *UserProfileApplicationImpl) NowPlaying(c *gin.Context) {
 		c.JSON(403, err.Error())
 	}
 	c.JSON(200, trackTag)
+}
 
+func (u *UserProfileApplicationImpl) TrackTimeLine(c *gin.Context) {
+	// ページング処理的なのしたい
+	trackTags, err := u.UseCase.TrackTimeLine()
+	if err != nil {
+		c.String(403, err.Error())
+	}
+	// user の画像とかを最適化することを考えると、DB モデルと domainモデルが一対一である必要はない
+	response := NewTrackTimeLineResponse(u, trackTags)
+	c.JSON(200, response)
 }
