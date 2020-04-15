@@ -14,8 +14,8 @@ import (
 
 func main() {
 	DRIVER := "mysql"
-	//DSN := "root:@(db:3306)/tomozou?charset=utf8&parseTime=True"
-	DSN := "root:@unix(/cloudsql/ongakuconnection:asia-northeast1:ongkdb)/tomozoudb?charset=utf8&parseTime=True"
+	DSN := "root:@(db:3306)/tomozou?charset=utf8&parseTime=True"
+	//DSN := "root:@unix(/cloudsql/ongakuconnection:asia-northeast1:ongkdb)/tomozoudb?charset=utf8&parseTime=True"
 	//"ユーザー名:パスワード@unix(/cloudsql/インスタンス接続名)/DB名"
 
 	gormConn, _ := datastore.GormConn(DRIVER, DSN)

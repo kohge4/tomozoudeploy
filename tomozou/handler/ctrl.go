@@ -62,11 +62,6 @@ func (u *UserProfileApplicationImpl) Callback(c *gin.Context) {
 	}
 	c.Set("userid", user.ID)
 	c.Set("user_name", user.Name)
-	/*
-		fmt.Println("UserCheck")
-		println(user.Name)
-		println(user.ID)
-	*/
 	u.AuthMiddleware.LoginHandler(c)
 }
 
