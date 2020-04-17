@@ -14,8 +14,8 @@ import (
 
 func main() {
 	DRIVER := "mysql"
-	//DSN := "root:@(db:3306)/tomozou?charset=utf8&parseTime=True"
-	DSN := "root:@unix(/cloudsql/ongakuconnection:asia-northeast1:ongkdb)/tomozoudb?charset=utf8&parseTime=True"
+	DSN := "root:@(db:3306)/tomozou?charset=utf8&parseTime=True"
+	//DSN := "root:@unix(/cloudsql/ongakuconnection:asia-northeast1:ongkdb)/tomozoudb?charset=utf8&parseTime=True"
 	//"ユーザー名:パスワード@unix(/cloudsql/インスタンス接続名)/DB名"
 
 	gormConn, _ := datastore.GormConn(DRIVER, DSN)
@@ -102,6 +102,11 @@ func main() {
 		rDev.GET("/deptest", func(c *gin.Context) {
 			c.String(200, "deploy test")
 		})
+		rDev.GET("/chat", func(c *gin.Context) {
+			chat := []domain.UserChat{}
+			devUserRepo.DB.Find(&chat)
+			c.JSON(200, chat)
+		})
 	}
 
 	// Chat 用: authによるJWT 以下から
@@ -117,7 +122,9 @@ func main() {
 	rChat.Use(authMiddleware.MiddlewareFunc())
 	{
 		rChat.GET("/room", chatAppImpl.DisplayChatRoom)
-		rChat.POST("/user/comment", chatAppImpl.UserChat)
+		rChat.POST("/artist/comment", chatAppImpl.ArtistComment)
+		rChat.POST("/track/comment", chatAppImpl.TrackComment)
+		rChat.POST("/user/chat", chatAppImpl.UserChat)
 		rChat.GET("/list/:artistID", chatAppImpl.DisplayChatListByArtist)
 	}
 	r.Run(":8080")
