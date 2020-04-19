@@ -16,7 +16,7 @@ type ChatApplicationImpl struct {
 	UseCase usecase.ChatApplication
 }
 
-func (ch *ChatApplicationImpl) UserChat(c *gin.Context) {
+func (ch *ChatApplicationImpl) ArtistComment(c *gin.Context) {
 	var jsonBody interface{}
 	c.BindJSON(&jsonBody)
 
@@ -40,6 +40,14 @@ func (ch *ChatApplicationImpl) UserChat(c *gin.Context) {
 	response, _ := chatResponse(cR)
 	c.JSON(200, response)
 }
+
+func (ch *ChatApplicationImpl) TrackComment(c *gin.Context) {
+	// input 用の UserPost は interface で 統一 => それを　後から変換するz
+}
+
+func (ch *ChatApplicationImpl) UserChat(c *gin.Context) {}
+
+func (ch *ChatApplicationImpl) PlaylistComment(c *gin.Context) {}
 
 func (ch *ChatApplicationImpl) DisplayChatRoom(c *gin.Context) {
 	userID, err := getIDFromContext(c)

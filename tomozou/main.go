@@ -53,6 +53,13 @@ func main() {
 		rSpo.GET("/myartist", userProfileAppImpl.MyArtist)
 	}
 
+	rAp := r.Group("/apple")
+	{
+		rAp.GET("/callback", userProfileAppImpl.CallbackApple)
+		rAp.GET("/login", userProfileAppImpl.LoginApple)
+		rAp.GET("/myartist", userProfileAppImpl.MyArtist)
+	}
+
 	// 認証用エンドポイント: JWTの検証を毎回行う
 	auth := r.Group("/me")
 	// Refresh time can be longer than token timeout
@@ -102,6 +109,11 @@ func main() {
 		rDev.GET("/deptest", func(c *gin.Context) {
 			c.String(200, "deploy test")
 		})
+		rDev.GET("/chat", func(c *gin.Context) {
+			chat := []domain.UserChat{}
+			devUserRepo.DB.Find(&chat)
+			c.JSON(200, chat)
+		})
 	}
 
 	// Chat 用: authによるJWT 以下から
@@ -117,7 +129,9 @@ func main() {
 	rChat.Use(authMiddleware.MiddlewareFunc())
 	{
 		rChat.GET("/room", chatAppImpl.DisplayChatRoom)
-		rChat.POST("/user/comment", chatAppImpl.UserChat)
+		rChat.POST("/artist/comment", chatAppImpl.ArtistComment)
+		rChat.POST("/track/comment", chatAppImpl.TrackComment)
+		rChat.POST("/user/chat", chatAppImpl.UserChat)
 		rChat.GET("/list/:artistID", chatAppImpl.DisplayChatListByArtist)
 	}
 	r.Run(":8080")
