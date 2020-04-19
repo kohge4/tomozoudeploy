@@ -12,9 +12,10 @@ type Response struct {
 }
 
 type MyProfileResponse struct {
-	Me      interface{} `json:"me"`
-	Artists interface{} `json:"artists"`
-	Tracks  interface{} `json:"tracks"`
+	Me         interface{} `json:"me"`
+	Artists    interface{} `json:"artists"`
+	Tracks     interface{} `json:"tracks"`
+	Nowplaying interface{} `json:"nowplaying`
 }
 
 type MyTrackResponse struct {

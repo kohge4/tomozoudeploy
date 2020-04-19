@@ -80,16 +80,19 @@ func (u *UserProfileApplicationImpl) MyProfile(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	tracks, err := u.UseCase.MyNowPlayingUserTrackTag(userID)
+	nowplaying, err := u.UseCase.MyNowPlayingUserTrackTag(userID)
 	if err != nil {
 		return
 	}
+	trackResp := NewTrackResponse(u, *nowplaying)
 	// userTrackTag 型の trackID  を用いて trackurlを作成する処理
+	//nowplaying, err := u.UseCase.
 
 	response := MyProfileResponse{
 		Me:      me,
 		Artists: tag,
-		Tracks:  tracks,
+		Tracks:  trackResp,
+		//NowPlayng: nowplayng,
 	}
 	c.JSON(200, response)
 }
