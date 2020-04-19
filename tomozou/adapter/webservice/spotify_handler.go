@@ -111,6 +111,8 @@ func (h *SpotifyHandler) UpdateUserItemOpt(userID int, opt string) error {
 	switch opt {
 	case "nowplaying":
 		h.saveNowPlayingTrack(userID)
+	case "update_nowplayng_one":
+		//h.saveNowPlayingTrackOne(userID)
 	default:
 	}
 	return nil

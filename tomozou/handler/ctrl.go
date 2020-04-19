@@ -167,11 +167,12 @@ func (u *UserProfileApplicationImpl) NowPlaying(c *gin.Context) {
 		c.String(403, err.Error())
 	}
 	// Handler から直接取ってくる方がいいかも => streaming
-	trackTag, err := u.UseCase.FetchNowPlayng(userID)
+	nowplayingTrackTag, err := u.UseCase.CallNowPlayng(userID)
 	if err != nil {
 		c.JSON(403, err.Error())
 	}
-	c.JSON(200, trackTag)
+	trackResp := NewTrackResponse(u, *nowplayingTrackTag)
+	c.JSON(200, trackResp)
 }
 
 func (u *UserProfileApplicationImpl) TrackTimeLine(c *gin.Context) {

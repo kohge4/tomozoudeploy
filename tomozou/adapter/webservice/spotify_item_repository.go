@@ -252,6 +252,10 @@ func (h *SpotifyHandler) saveNowPlayingTrack(userID int) error {
 	return nil
 }
 
+func (h *SpotifyHandler) saveNowPlayingTrackOne(userID int) error {
+	return nil
+}
+
 func (h *SpotifyHandler) checkDupulicateArtist(socialID string) bool {
 	artist, _ := h.SpotifyRepository.ReadArtistBySocialID(socialID)
 	if artist == nil {

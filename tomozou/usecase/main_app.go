@@ -113,7 +113,7 @@ func (u UserProfileApplication) MyNowPlayingUserTrackTag(id int) (*domain.UserTr
 	return &trackTags[len(trackTags)-1], nil
 }
 
-func (u *UserProfileApplication) FetchNowPlayng(id int) (interface{}, error) {
+func (u *UserProfileApplication) CallNowPlayng(id int) (*domain.UserTrackTag, error) {
 	// nowplayng を　外部から読み取った上で表示
 	_, err := u.UserRepository.Update(id)
 	if err != nil {
@@ -129,7 +129,7 @@ func (u *UserProfileApplication) FetchNowPlayng(id int) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return trackTag, nil
+	return &trackTag[len(trackTag)-1], nil
 }
 
 // UserID から その UserIDの もつ artistID を　全部 検索する
