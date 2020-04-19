@@ -23,13 +23,3 @@ type UserChat struct {
 	ArtistID  int       `gorm:"column:artist_id;not null" json:"artist_id"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 }
-
-/*
-func NewChat(userID int, artistID int, comment string) *UserChat {
-	return &UserChat{
-		ID:       userID,
-		ArtistID: artistID,
-		Comment:  comment,
-	}
-}
-*/

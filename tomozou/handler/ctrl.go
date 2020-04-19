@@ -20,6 +20,8 @@ type UserProfileApplicationImpl struct {
 }
 
 func (u *UserProfileApplicationImpl) Login(c *gin.Context) {
+	// context で 外から spotify か apple か判別
+	// つまり ハンドラーを handler.Spotify handler.Apple とかで 使えるようにした方が良さげ
 	u.Handler.Authenticator.SetAuthInfo(u.Handler.ClientID, u.Handler.SecretKey)
 	c.JSON(200, Response{200, u.Handler.Authenticator.AuthURL(u.Handler.State)})
 }
