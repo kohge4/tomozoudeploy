@@ -170,7 +170,12 @@ func (u UserProfileApplication) TrackTimeLine() ([]domain.UserTrackTag, error) {
 	if err != nil {
 		return nil, err
 	}
-	return trackTags[0:20], nil
+	l := len(trackTags)
+	if l > 50 {
+		l = l - 50
+		return trackTags[l:], nil
+	}
+	return trackTags, nil
 }
 
 /*
