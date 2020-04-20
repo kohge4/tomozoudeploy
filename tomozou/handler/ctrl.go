@@ -188,7 +188,7 @@ func (u *UserProfileApplicationImpl) TrackTimeLine(c *gin.Context) {
 
 // デバッグ
 func (u *UserProfileApplicationImpl) DebugTrackTag(c *gin.Context) {
-	nowplaying, err := u.UseCase.MyNowPlayingUserTrackTag(1)
+	nowplaying, err := u.UseCase.MyNowPlayingUserTrackTag(5)
 	if err != nil {
 		return
 	}
