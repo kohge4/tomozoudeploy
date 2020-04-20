@@ -134,9 +134,7 @@ func (repo *SpotifyItemDBRepository) ReadUserTrackTagByTagName(tagName string) (
 func (repo *SpotifyItemDBRepository) ReadUserTrackTagByUserIDANDTagName(userID int, tagName string) ([]domain.UserTrackTag, error) {
 	// nowplaying の 表示用
 	userTrackTags := []domain.UserTrackTag{}
-	tx := repo.DB.Where("user_id = ?", userID)
-	tx.Where("tag_name = ?", tagName)
-	tx.Find(&userTrackTags)
+	repo.DB.Where("user_id = ? AND tag_name = ?", userID, tagName).Find(userTrackTags)
 	if len(userTrackTags) == 0 {
 		return userTrackTags, fmt.Errorf("nil error")
 	}

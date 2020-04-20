@@ -1,4 +1,7 @@
 ## メモ
+- バックエンド: https://ongakconnbe-qy2hw5cluq-an.a.run.app/dev/tracktag
+- フロントエンド: https://ongakuconnection.com/
+
 
 ## cloud run に デプロイしたいとき 
 - docker build -t ongk .
