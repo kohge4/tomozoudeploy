@@ -19,13 +19,13 @@ type MyProfileResponse struct {
 }
 
 type MyTrackResponse struct {
-	UserID       int
-	TrackID      int
-	TrackURL     string
-	TrackName    string
-	TrackComment string
-	ArtistID     int
-	Artistname   string
+	UserID       int    `json:"user_id"`
+	TrackID      int    `json:"track_id"`
+	TrackURL     string `json:"track_url`
+	TrackName    string `json:"track_name"`
+	TrackComment string `json:"track_commemnt"`
+	ArtistID     int    `json:"artist_id"`
+	Artistname   string `json:"artost_name"`
 }
 
 func NewMyTrackResponse(track *domain.UserTrackTag) *MyTrackResponse {
