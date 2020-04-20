@@ -101,7 +101,7 @@ func main() {
 			devUserRepo.DB.Find(&track)
 			c.JSON(200, track)
 		})
-		rDev.GET("/mytrack", userProfileAppImpl.MyTrack)
+		rDev.GET("/mytracktag", userProfileAppImpl.DebugTrackTag)
 		rDev.GET("/timeline", userProfileAppImpl.TrackTimeLine)
 		rDev.GET("/userdata", func(c *gin.Context) {
 		})

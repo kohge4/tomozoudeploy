@@ -185,3 +185,13 @@ func (u *UserProfileApplicationImpl) TrackTimeLine(c *gin.Context) {
 	response := NewTrackTimeLineResponse(u, trackTags)
 	c.JSON(200, response)
 }
+
+// デバッグ
+func (u *UserProfileApplicationImpl) DebugTrackTag(c *gin.Context) {
+	nowplaying, err := u.UseCase.MyNowPlayingUserTrackTag(1)
+	if err != nil {
+		return
+	}
+	trackResp := NewTrackResponse(u, *nowplaying)
+	c.JSON(200, trackResp)
+}
