@@ -103,7 +103,7 @@ func (u UserProfileApplication) MyUserTrackTag(id int) (interface{}, error) {
 
 func (u UserProfileApplication) MyNowPlayingUserTrackTag(id int) (*domain.UserTrackTag, error) {
 	// nowplaying を表示する用
-	trackTags, err := u.ItemRepository.ReadUserTrackTagByUserID(id)
+	trackTags, err := u.ItemRepository.ReadUserTrackTagByUserIDANDTagName(id, "nowplaying")
 	if err != nil {
 		return nil, err
 	}
