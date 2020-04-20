@@ -9,6 +9,6 @@ type Track struct {
 	ArtistID   int    `gorm:"column:arttist_id;not null" json:"artist_id"`
 }
 
-func (t *Track) UserTrackTag(userID int) *UserTrackTag {
-	return NewUserTrackTag(t, userID)
+func (t *Track) UserTrackTag(userID int, tagName string) *UserTrackTag {
+	return NewUserTrackTag(t, userID, tagName)
 }

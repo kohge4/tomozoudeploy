@@ -39,12 +39,12 @@ type UserTrackTag struct {
 	TrackSocialID string `gorm:"column:track_social_id" json:"track_social_id"`
 }
 
-func NewUserTrackTag(track *Track, userID int) *UserTrackTag {
+func NewUserTrackTag(track *Track, userID int, tagName string) *UserTrackTag {
 	return &UserTrackTag{
 		UserID:        userID,
 		TrackID:       track.ID,
 		ArtistID:      track.ArtistID,
-		TagName:       "nowplaying",
+		TagName:       tagName,
 		ArtistName:    track.ArtistName,
 		TrackName:     track.Name,
 		TrackSocialID: track.SocialID,

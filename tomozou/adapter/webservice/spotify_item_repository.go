@@ -193,7 +193,7 @@ func (h *SpotifyHandler) saveTopTracks(userID int) error {
 			return err
 		}
 
-		userTrackTag := domain.NewUserTrackTag(trackIn, userID)
+		userTrackTag := domain.NewUserTrackTag(trackIn, userID, "toptrack")
 		h.SpotifyRepository.SaveUserTrackTag(*userTrackTag)
 		// 複数の arthist が 携わるトラックについてちゃんとやった方がいいかも
 	}
@@ -247,7 +247,7 @@ func (h *SpotifyHandler) saveNowPlayingTrack(userID int) error {
 	if err != nil {
 		return err
 	}
-	userTrackTag := domain.NewUserTrackTag(trackIn, userID)
+	userTrackTag := domain.NewUserTrackTag(trackIn, userID, "nowplaying")
 	h.SpotifyRepository.SaveUserTrackTag(*userTrackTag)
 	return nil
 }
