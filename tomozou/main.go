@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
@@ -96,9 +98,11 @@ func main() {
 			devUserRepo.DB.Find(&track)
 			c.JSON(200, track)
 		})
-		rDev.GET("/tracktag", func(c *gin.Context) {
+		rDev.GET("/tracktag/:userID", func(c *gin.Context) {
+			userID := c.Param("userID")
+			id, _ := strconv.Atoi(userID)
 			track := []domain.UserTrackTag{}
-			devUserRepo.DB.Find(&track)
+			devUserRepo.DB.Where("user_id = ?", id).Find(&track)
 			c.JSON(200, track)
 		})
 		rDev.GET("/mytracktag", userProfileAppImpl.DebugTrackTag)
