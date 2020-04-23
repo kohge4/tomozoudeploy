@@ -121,6 +121,7 @@ func (u *UserProfileApplication) CallNowPlayng(id int) (*domain.UserTrackTag, er
 		return nil, err
 	}
 	// この options は domain に 厳密に型を用意してやった方がいいかも
+	// 最近聞いてなかったら recentplaytrack で　表示できない => うまいこと条件分岐させる
 	err = u.WebServiceAccount.UpdateUserItemOpt(id, "nowplaying")
 	if err != nil {
 		return nil, err
@@ -169,11 +170,6 @@ func (u UserProfileApplication) TrackTimeLine() ([]domain.UserTrackTag, error) {
 	trackTags, err := u.ItemRepository.ReadUserTrackTagByTagName("nowplaying")
 	if err != nil {
 		return nil, err
-	}
-	l := len(trackTags)
-	if l > 50 {
-		l = l - 50
-		return trackTags[l:], nil
 	}
 	return trackTags, nil
 }

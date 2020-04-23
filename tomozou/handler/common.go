@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +19,21 @@ func getIDFromContext(c *gin.Context) (int, error) {
 		return 0, fmt.Errorf("Authentication is failed")
 	}
 	return int(userID), nil
+}
+
+func getQueryParamForItem(c *gin.Context) (*int, *int, error) {
+	lengthString := c.Query("length")
+	length, err := strconv.Atoi(lengthString)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	offsetString := c.Query("offset")
+	offset, err := strconv.Atoi(offsetString)
+	if err != nil {
+		return nil, nil, err
+	}
+	return &length, &offset, nil
 }
 
 func embedTrackURLFromSopotifyID() {}

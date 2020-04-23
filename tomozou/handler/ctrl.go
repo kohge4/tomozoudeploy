@@ -176,12 +176,20 @@ func (u *UserProfileApplicationImpl) NowPlaying(c *gin.Context) {
 }
 
 func (u *UserProfileApplicationImpl) TrackTimeLine(c *gin.Context) {
-	// ページング処理的なのしたい
+	// domain model に画像等を用意する必要はなくて response で作り直していく方針のほうがいいかも
+	// user の画像とかを最適化することを考えると、DB モデルと domainモデルが一対一である必要はない
+	length, _, err := getQueryParamForItem(c)
+	if err != nil {
+		c.String(403, err.Error())
+	}
 	trackTags, err := u.UseCase.TrackTimeLine()
 	if err != nil {
 		c.String(403, err.Error())
 	}
-	// user の画像とかを最適化することを考えると、DB モデルと domainモデルが一対一である必要はない
+	l := len(trackTags)
+	if l > *length {
+		trackTags = trackTags[(l - 50):]
+	}
 	response := NewTrackTimeLineResponse(u, trackTags)
 	c.JSON(200, response)
 }
