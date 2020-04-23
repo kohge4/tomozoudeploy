@@ -167,11 +167,12 @@ func (u UserProfileApplication) DisplayUsersByArtistName(artistName string) (int
 }
 
 func (u UserProfileApplication) TrackTimeLine() ([]domain.UserTrackTag, error) {
-	trackTags, err := u.ItemRepository.ReadUserTrackTagByTagName("nowplaying")
+	nowplayingTrackTags, err := u.ItemRepository.ReadUserTrackTagByTagName("nowplaying")
 	if err != nil {
 		return nil, err
 	}
-	return trackTags, nil
+	//topTrackTags, err := u.ItemRepository.ReadUserTrackTagByTagName("toptrack")
+	return nowplayingTrackTags, nil
 }
 
 /*

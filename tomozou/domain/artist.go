@@ -9,6 +9,8 @@ type Artist struct {
 	SocialID  string    `gorm:"column:social_id;not null" json:"social_id"`
 	Image     string    `gorm:"column:image;not null" json:"image"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
+	// SocialService string : spotify, apple　とか書く done したかも書く
+	// ArtistOption struct{} を作成して それに apple とかについて書いていく
 }
 
 func NewArtist(name string, socialID string, image string) Artist {

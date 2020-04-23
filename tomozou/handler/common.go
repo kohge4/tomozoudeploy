@@ -23,12 +23,18 @@ func getIDFromContext(c *gin.Context) (int, error) {
 
 func getQueryParamForItem(c *gin.Context) (*int, *int, error) {
 	lengthString := c.Query("length")
+	if lengthString == "" {
+		lengthString = "50"
+	}
 	length, err := strconv.Atoi(lengthString)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	offsetString := c.Query("offset")
+	if offsetString == "" {
+		offsetString = "0"
+	}
 	offset, err := strconv.Atoi(offsetString)
 	if err != nil {
 		return nil, nil, err
