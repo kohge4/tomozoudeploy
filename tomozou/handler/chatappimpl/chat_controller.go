@@ -1,4 +1,4 @@
-package handler
+package chatappimpl
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"tomozou/adapter/chatdata"
 	"tomozou/domain"
+	"tomozou/handler/common"
 	"tomozou/usecase"
 
 	"github.com/gin-gonic/gin"
@@ -50,7 +51,7 @@ func (ch *ChatApplicationImpl) UserChat(c *gin.Context) {}
 func (ch *ChatApplicationImpl) PlaylistComment(c *gin.Context) {}
 
 func (ch *ChatApplicationImpl) DisplayChatRoom(c *gin.Context) {
-	userID, err := getIDFromContext(c)
+	userID, err := common.GetIDFromContext(c)
 	if err != nil {
 		c.String(403, err.Error())
 	}

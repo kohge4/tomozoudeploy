@@ -1,4 +1,4 @@
-package handler
+package mainappimpl
 
 import (
 	"fmt"
@@ -9,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"tomozou/adapter/webservice"
+	"tomozou/handler/chatappimpl"
+	"tomozou/handler/common"
 	"tomozou/usecase"
 )
 
@@ -68,7 +70,7 @@ func (u *UserProfileApplicationImpl) Callback(c *gin.Context) {
 }
 
 func (u *UserProfileApplicationImpl) MyProfile(c *gin.Context) {
-	userID, err := getIDFromContext(c)
+	userID, err := common.GetIDFromContext(c)
 	if err != nil {
 		c.String(403, err.Error())
 	}
@@ -98,7 +100,7 @@ func (u *UserProfileApplicationImpl) MyProfile(c *gin.Context) {
 }
 
 func (u *UserProfileApplicationImpl) MyChatList(c *gin.Context) {
-	userID, err := getIDFromContext(c)
+	userID, err := common.GetIDFromContext(c)
 	if err != nil {
 		c.String(403, err.Error())
 	}
@@ -106,7 +108,7 @@ func (u *UserProfileApplicationImpl) MyChatList(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	response := MyChatListResponse{
+	response := chatappimpl.MyChatListResponse{
 		Artists:     tag,
 		ArtistsInfo: "",
 	}
@@ -114,7 +116,7 @@ func (u *UserProfileApplicationImpl) MyChatList(c *gin.Context) {
 }
 
 func (u *UserProfileApplicationImpl) MyArtist(c *gin.Context) {
-	userID, err := getIDFromContext(c)
+	userID, err := common.GetIDFromContext(c)
 	if err != nil {
 		c.String(403, err.Error())
 	}
@@ -147,7 +149,7 @@ func (u *UserProfileApplicationImpl) SearchUsersByArtistName(c *gin.Context) {
 
 func (u *UserProfileApplicationImpl) MyTrack(c *gin.Context) {
 	// nowplaying の表示用
-	userID, err := getIDFromContext(c)
+	userID, err := common.GetIDFromContext(c)
 	if err != nil {
 		c.String(403, err.Error())
 	}
@@ -162,7 +164,7 @@ func (u *UserProfileApplicationImpl) MyTrack(c *gin.Context) {
 }
 
 func (u *UserProfileApplicationImpl) NowPlaying(c *gin.Context) {
-	userID, err := getIDFromContext(c)
+	userID, err := common.GetIDFromContext(c)
 	if err != nil {
 		c.String(403, err.Error())
 	}
@@ -178,7 +180,7 @@ func (u *UserProfileApplicationImpl) NowPlaying(c *gin.Context) {
 func (u *UserProfileApplicationImpl) TrackTimeLine(c *gin.Context) {
 	// domain model に画像等を用意する必要はなくて response で作り直していく方針のほうがいいかも
 	// user の画像とかを最適化することを考えると、DB モデルと domainモデルが一対一である必要はない
-	length, _, err := getQueryParamForItem(c)
+	length, _, err := common.GetQueryParamForItem(c)
 	if err != nil {
 		c.String(403, err.Error())
 	}

@@ -1,4 +1,4 @@
-package handler
+package mainappimpl
 
 import (
 	"time"
@@ -30,9 +30,9 @@ type MyTrackResponse struct {
 
 func NewMyTrackResponse(track *domain.UserTrackTag) *MyTrackResponse {
 	return &MyTrackResponse{
-		TrackURL:     newTrackURL(track.TrackSocialID),
-		TrackName:    track.TrackName,
-		TrackComment: track.TrackComment,
+		TrackURL:  newTrackURL(track.TrackSocialID),
+		TrackName: track.TrackName,
+		//TrackComment: track.TrackComment,
 	}
 }
 
@@ -87,19 +87,4 @@ func NewTrackResponse(u *UserProfileApplicationImpl, trackTag domain.UserTrackTa
 func newTrackURL(socialID string) string {
 	url := settings.SpotifyTrackURL + socialID
 	return url
-}
-
-type ChatResponse struct {
-	ID        int       `json:"id"`
-	Comment   string    `json:"comment"`
-	Name      string    `json:"name"`
-	Image     string    `json:"image"`
-	UserID    int       `json:"user_id"`
-	ArtistID  int       `json:"artist_id"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
-type MyChatListResponse struct {
-	Artists     interface{} `json:"artists"`
-	ArtistsInfo interface{} `json:"artists_info"`
 }

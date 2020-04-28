@@ -8,8 +8,12 @@ import (
 
 	"tomozou/adapter/webservice"
 	"tomozou/domain"
-	"tomozou/handler"
+	"tomozou/handler/chatappimpl"
+	"tomozou/handler/mainappimpl"
 	"tomozou/infra/datastore"
+	"tomozou/infra/datastore/chatrepoimpl"
+	"tomozou/infra/datastore/itemrepoimpl"
+	"tomozou/infra/datastore/userrepoimpl"
 	"tomozou/middleware/auth"
 	"tomozou/usecase"
 )
@@ -21,15 +25,15 @@ func main() {
 	//"ユーザー名:パスワード@unix(/cloudsql/インスタンス接続名)/DB名"
 
 	gormConn, _ := datastore.GormConn(DRIVER, DSN)
-	userRepo := datastore.NewUserDBRepository(gormConn)
-	itemRepo := datastore.NewItemDBRepository(gormConn)
+	userRepo := userrepoimpl.NewUserRepositoryImpl(gormConn)
+	itemRepo := itemrepoimpl.NewItemRepositoryImpl(gormConn)
 
 	useCase := usecase.NewUserProfileApplication(userRepo, itemRepo)
 
 	spotifyHandler := webservice.NewSpotifyHandler(userRepo, itemRepo, gormConn)
 	authMiddleware := auth.AuthUser()
 
-	userProfileAppImpl := handler.UserProfileApplicationImpl{
+	userProfileAppImpl := mainappimpl.UserProfileApplicationImpl{
 		UseCase: useCase,
 
 		Handler:        spotifyHandler,
@@ -76,7 +80,7 @@ func main() {
 	}
 
 	// 開発用: データ確認エンドポイント
-	devUserRepo := datastore.NewDevUserRepo(gormConn)
+	devUserRepo := userrepoimpl.NewDevUserRepo(gormConn)
 	rDev := r.Group("/dev")
 	{
 		rDev.GET("/user", func(c *gin.Context) {
@@ -121,12 +125,12 @@ func main() {
 	}
 
 	// Chat 用: authによるJWT 以下から
-	chatRepo := datastore.NewChatDBRepository(gormConn)
+	chatRepo := chatrepoimpl.NewChatDBRepository(gormConn)
 	chatApp := usecase.ChatApplication{
 		ItemRepository: itemRepo,
 		ChatRepository: chatRepo,
 	}
-	chatAppImpl := handler.ChatApplicationImpl{
+	chatAppImpl := chatappimpl.ChatApplicationImpl{
 		UseCase: chatApp,
 	}
 	rChat := r.Group("/chat")

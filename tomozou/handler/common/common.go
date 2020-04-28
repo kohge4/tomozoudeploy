@@ -1,4 +1,4 @@
-package handler
+package common
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getIDFromContext(c *gin.Context) (int, error) {
+func GetIDFromContext(c *gin.Context) (int, error) {
 	id, _ := c.Get("userid")
 	userID, ok := id.(float64)
 	if ok == false {
@@ -21,7 +21,7 @@ func getIDFromContext(c *gin.Context) (int, error) {
 	return int(userID), nil
 }
 
-func getQueryParamForItem(c *gin.Context) (*int, *int, error) {
+func GetQueryParamForItem(c *gin.Context) (*int, *int, error) {
 	lengthString := c.Query("length")
 	if lengthString == "" {
 		lengthString = "50"
