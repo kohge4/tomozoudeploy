@@ -22,7 +22,7 @@ func main() {
 
 	gormConn, _ := datastore.GormConn(DRIVER, DSN)
 	userRepo := datastore.NewUserDBRepository(gormConn)
-	itemRepo := datastore.NewSpotifyItemDBRepository(gormConn)
+	itemRepo := datastore.NewItemDBRepository(gormConn)
 
 	useCase := usecase.NewUserProfileApplication(userRepo, itemRepo)
 

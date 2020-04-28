@@ -37,12 +37,12 @@ func NewMyTrackResponse(track *domain.UserTrackTag) *MyTrackResponse {
 }
 
 type TrackTimeLineResponse struct {
-	Items []TrackResponse `json:"items"`
-	//Offset int
+	Items  []TrackResponse `json:"items"`
+	Offset int             `json:"offset"`
+	Length int             `json:"length"`
 	//Limit  int
 	//LastID int
 	// 本来は 順番に表示させるやつやりたい
-	Length int `json:"length"`
 	//Filter string
 }
 
@@ -62,9 +62,11 @@ func NewTrackTimeLineResponse(u *UserProfileApplicationImpl, trackTags []domain.
 	for _, tag := range trackTags {
 		items = append(items, NewTrackResponse(u, tag))
 	}
+	// offset と length はなんかいい方法ありそう(option でまとめて引数とか)
 	return &TrackTimeLineResponse{
 		Items:  items,
 		Length: len(trackTags),
+		Offset: 0,
 	}
 }
 

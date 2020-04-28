@@ -8,52 +8,52 @@ import (
 )
 
 // SpotifyHanlder が 構造体 に もつ リポジトリ
-type SpotifyItemDBRepository struct {
+type ItemDBRepository struct {
 	DB *gorm.DB
 }
 
-func NewSpotifyItemDBRepository(db *gorm.DB) domain.ItemRepository {
-	return &SpotifyItemDBRepository{
+func NewItemDBRepository(db *gorm.DB) domain.ItemRepository {
+	return &ItemDBRepository{
 		DB: db,
 	}
 }
 
 // UserApplication で 外から使用する ==> 大元の リポジトリを 外から使用する方針の方が綺麗
 //　いらない説
-func (repo *SpotifyItemDBRepository) ReadItemByUser(userID int) (interface{}, error) {
+func (repo *ItemDBRepository) ReadItemByUser(userID int) (interface{}, error) {
 	var artists []domain.Artist
 	repo.DB.Find(&artists)
 	return artists, nil
 }
 
-func (repo *SpotifyItemDBRepository) ReadTagByUser(userID int) (interface{}, error) {
+func (repo *ItemDBRepository) ReadTagByUser(userID int) (interface{}, error) {
 	var tag []domain.UserArtistTag
 	repo.DB.Find(&tag)
 	return tag, nil
 }
 
 // 以下は SpotifyHandler から 保存するときガンガン使用する
-func (repo *SpotifyItemDBRepository) SaveArtist(artist domain.Artist) (int, error) {
+func (repo *ItemDBRepository) SaveArtist(artist domain.Artist) (int, error) {
 	repo.DB.Create(&artist)
 	return artist.ID, nil
 }
 
-func (repo *SpotifyItemDBRepository) SaveUserArtistTag(tag domain.UserArtistTag) error {
+func (repo *ItemDBRepository) SaveUserArtistTag(tag domain.UserArtistTag) error {
 	repo.DB.Create(&tag)
 	return nil
 }
 
-func (repo *SpotifyItemDBRepository) SaveTrack(track domain.Track) (int, error) {
+func (repo *ItemDBRepository) SaveTrack(track domain.Track) (int, error) {
 	repo.DB.Create(&track)
 	return track.ID, nil
 }
 
-func (repo *SpotifyItemDBRepository) SaveUserTrackTag(tag domain.UserTrackTag) error {
+func (repo *ItemDBRepository) SaveUserTrackTag(tag domain.UserTrackTag) error {
 	repo.DB.Create(&tag)
 	return nil
 }
 
-func (repo *SpotifyItemDBRepository) ReadArtistBySocialID(socialID string) (*domain.Artist, error) {
+func (repo *ItemDBRepository) ReadArtistBySocialID(socialID string) (*domain.Artist, error) {
 	artists := []*domain.Artist{}
 	repo.DB.Where("social_id = ?", socialID).Find(&artists)
 	if len(artists) == 0 {
@@ -66,13 +66,13 @@ func (repo *SpotifyItemDBRepository) ReadArtistBySocialID(socialID string) (*dom
 	return artists[0], nil
 }
 
-func (repo *SpotifyItemDBRepository) ReadUserArtistTagByUserID(userID int) (interface{}, error) {
+func (repo *ItemDBRepository) ReadUserArtistTagByUserID(userID int) (interface{}, error) {
 	userArtistTags := []domain.UserArtistTag{}
 	repo.DB.Where("user_id = ?", userID).Find(&userArtistTags)
 	return userArtistTags, nil
 }
 
-func (repo *SpotifyItemDBRepository) ReadUserIDByArtistID(artistID int) ([]int, error) {
+func (repo *ItemDBRepository) ReadUserIDByArtistID(artistID int) ([]int, error) {
 	var users []int
 	flag := 0
 
@@ -89,7 +89,7 @@ func (repo *SpotifyItemDBRepository) ReadUserIDByArtistID(artistID int) ([]int, 
 	return users, nil
 }
 
-func (repo *SpotifyItemDBRepository) ReadUserIDByArtistName(artistName string) ([]int, error) {
+func (repo *ItemDBRepository) ReadUserIDByArtistName(artistName string) ([]int, error) {
 	var users []int
 	flag := 0
 
@@ -106,13 +106,13 @@ func (repo *SpotifyItemDBRepository) ReadUserIDByArtistName(artistName string) (
 	return users, nil
 }
 
-func (repo *SpotifyItemDBRepository) ReadUserArtistTagByTagID(tagID int) (interface{}, error) {
+func (repo *ItemDBRepository) ReadUserArtistTagByTagID(tagID int) (interface{}, error) {
 	userArtistTags := []domain.UserArtistTag{}
 	repo.DB.Where("tag_id = ?", tagID).Find(&userArtistTags)
 	return userArtistTags, nil
 }
 
-func (repo *SpotifyItemDBRepository) ReadUserTrackTagByUserID(userID int) ([]domain.UserTrackTag, error) {
+func (repo *ItemDBRepository) ReadUserTrackTagByUserID(userID int) ([]domain.UserTrackTag, error) {
 	// nowplaying の 表示用
 	userTrackTags := []domain.UserTrackTag{}
 	repo.DB.Where("user_id = ?", userID).Find(&userTrackTags)
@@ -122,7 +122,7 @@ func (repo *SpotifyItemDBRepository) ReadUserTrackTagByUserID(userID int) ([]dom
 	return userTrackTags, nil
 }
 
-func (repo *SpotifyItemDBRepository) ReadUserTrackTagByTagName(tagName string) ([]domain.UserTrackTag, error) {
+func (repo *ItemDBRepository) ReadUserTrackTagByTagName(tagName string) ([]domain.UserTrackTag, error) {
 	userTrackTags := []domain.UserTrackTag{}
 	repo.DB.Where("tag_name = ?", tagName).Find(&userTrackTags)
 	if len(userTrackTags) == 0 {
@@ -131,7 +131,7 @@ func (repo *SpotifyItemDBRepository) ReadUserTrackTagByTagName(tagName string) (
 	return userTrackTags, nil
 }
 
-func (repo *SpotifyItemDBRepository) ReadUserTrackTagByUserIDANDTagName(userID int, tagName string) ([]domain.UserTrackTag, error) {
+func (repo *ItemDBRepository) ReadUserTrackTagByUserIDANDTagName(userID int, tagName string) ([]domain.UserTrackTag, error) {
 	// nowplaying の 表示用
 	userTrackTags := []domain.UserTrackTag{}
 	repo.DB.Where("user_id = ? AND tag_name = ?", userID, tagName).Find(&userTrackTags)
@@ -141,7 +141,7 @@ func (repo *SpotifyItemDBRepository) ReadUserTrackTagByUserIDANDTagName(userID i
 	return userTrackTags, nil
 }
 
-func (repo *SpotifyItemDBRepository) DeleteAllUserArtistTagsByUserID(userID int) error {
+func (repo *ItemDBRepository) DeleteAllUserArtistTagsByUserID(userID int) error {
 	tag := domain.UserArtistTag{}
 	repo.DB.Where("user_id LIKE ?", userID).Delete(&tag)
 	return nil

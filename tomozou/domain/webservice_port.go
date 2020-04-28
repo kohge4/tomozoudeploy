@@ -12,3 +12,15 @@ type WebServiceAccount interface {
 	UpdateUserItem(userID int) error
 	UpdateUserItemOpt(userID int, opt string) error
 }
+
+type WebService struct {
+	ServiceName       string
+	WebServiceAccount WebServiceAccount
+}
+
+func NewWebService(name string, wSA WebServiceAccount) *WebService {
+	return &WebService{
+		ServiceName:       name,
+		WebServiceAccount: wSA,
+	}
+}

@@ -12,3 +12,10 @@ type Track struct {
 func (t *Track) UserTrackTag(userID int, tagName string) *UserTrackTag {
 	return NewUserTrackTag(t, userID, tagName)
 }
+
+// 対応したらこのタグを増やす
+type TrackWebServiceTag struct {
+	ID           int
+	TrackID      int
+	WebServiceID string
+}

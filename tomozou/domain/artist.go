@@ -28,3 +28,10 @@ type ArtistTrackTag struct {
 	TrackID  int
 	TagName  string
 }
+
+// 対応したらこのタグを増やす
+type ArtistWebServiceTag struct {
+	ID           int
+	ArtistID     int
+	WebServiceID string
+}

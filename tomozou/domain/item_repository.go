@@ -4,6 +4,7 @@ package domain
 type ItemRepository interface {
 	ReadItemByUser(userID int) (interface{}, error)
 	ReadArtistBySocialID(socialID string) (*Artist, error)
+
 	SaveArtist(Artist) (int, error)
 	SaveTrack(Track) (int, error)
 	SaveUserArtistTag(UserArtistTag) error
