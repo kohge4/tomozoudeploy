@@ -31,3 +31,12 @@ func (u *UserProfileApplicationImpl) SearchUsersByArtistID(c *gin.Context) {
 	}
 	c.JSON(200, users)
 }
+
+func (u *UserProfileApplicationImpl) SearchUsersByArtistName(c *gin.Context) {
+	name := c.Query("name")
+	users, err := u.UseCase.DisplayUsersByArtistName(name)
+	if err != nil {
+		c.JSON(403, err.Error())
+	}
+	c.JSON(200, users)
+}

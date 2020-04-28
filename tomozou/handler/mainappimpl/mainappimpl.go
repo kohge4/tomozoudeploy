@@ -11,5 +11,6 @@ type UserProfileApplicationImpl struct {
 	UseCase *usecase.UserProfileApplication
 
 	Handler        *webservice.SpotifyHandler
+	SecondHandler  *webservice.SpotifyHandler
 	AuthMiddleware *jwt.GinJWTMiddleware
 }
