@@ -249,6 +249,10 @@ func (h *SpotifyHandler) saveNowPlayingTrack(userID int) error {
 	}
 	userTrackTag := domain.NewUserTrackTag(trackIn, userID, "nowplaying")
 	lastTag, _ := h.SpotifyRepository.ReadUserTrackTagByUserIDANDTagName(userID, "nowplaying")
+	if len(lastTag) < 1 {
+		h.SpotifyRepository.SaveUserTrackTag(*userTrackTag)
+		return nil
+	}
 	if userTrackTag.TrackSocialID == lastTag[len(lastTag)-1].TrackSocialID {
 		return nil
 	}

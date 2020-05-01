@@ -20,8 +20,8 @@ import (
 
 func main() {
 	DRIVER := "mysql"
-	//DSN := "root:@(db:3306)/tomozou?charset=utf8&parseTime=True"
-	DSN := "root:@unix(/cloudsql/ongakuconnection:asia-northeast1:ongkdb)/tomozoudb?charset=utf8&parseTime=True"
+	DSN := "root:@(db:3306)/tomozou?charset=utf8&parseTime=True"
+	//DSN := "root:@unix(/cloudsql/ongakuconnection:asia-northeast1:ongkdb)/tomozoudb?charset=utf8&parseTime=True"
 	//"ユーザー名:パスワード@unix(/cloudsql/インスタンス接続名)/DB名"
 
 	gormConn, _ := datastore.GormConn(DRIVER, DSN)
@@ -87,7 +87,7 @@ func main() {
 			users, _ := devUserRepo.CheckUser()
 			c.JSON(200, users)
 		})
-		rDev.GET("/tag", func(c *gin.Context) {
+		rDev.GET("/userartisttag", func(c *gin.Context) {
 			tags := []domain.UserArtistTag{}
 			devUserRepo.DB.Find(&tags)
 			c.JSON(200, tags)
@@ -100,6 +100,16 @@ func main() {
 		rDev.GET("/track", func(c *gin.Context) {
 			track := []domain.Track{}
 			devUserRepo.DB.Find(&track)
+			c.JSON(200, track)
+		})
+		rDev.GET("/usertracktag", func(c *gin.Context) {
+			tags := []domain.UserTrackTag{}
+			devUserRepo.DB.Find(&tags)
+			c.JSON(200, tags)
+		})
+		rDev.GET("/tracktagresp", func(c *gin.Context) {
+			track := []domain.UserTrackTag{}
+			//devUserRepo.DB.Raw("SELECT * FROM user_track_tag JOIN track ON user_track_tag.track_id = track.id").scan()
 			c.JSON(200, track)
 		})
 		rDev.GET("/tracktag/:userID", func(c *gin.Context) {

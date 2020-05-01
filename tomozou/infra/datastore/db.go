@@ -34,5 +34,48 @@ func GormConn(driver string, dsn string) (*gorm.DB, error) {
 	if !db.HasTable(&domain.UserToken{}) {
 		db.CreateTable(&domain.UserToken{})
 	}
+
+	Constructor(db)
 	return db, nil
+}
+
+func Constructor(db *gorm.DB) error {
+	Users := []domain.User{}
+	Artists := []domain.Artist{}
+	UserArtistTags := []domain.UserArtistTag{}
+	Tracks := []domain.Track{}
+	UserTrackTags := []domain.UserTrackTag{}
+	UserChats := []domain.UserChat{}
+	UserTokens := []domain.UserToken{}
+
+	//db.Find(&[]domain.User{})
+	db.Find(&Users)
+	if len(Users) == 0 {
+		db.Create(&TestUser)
+	}
+	db.Find(&Artists)
+	if len(Artists) == 0 {
+		db.Create(&TestArtist)
+	}
+	db.Find(&UserArtistTags)
+	if len(UserArtistTags) == 0 {
+		db.Create(&TestUserArtistTag)
+	}
+	db.Find(&Tracks)
+	if len(Tracks) == 0 {
+		db.Create(&TestTrack)
+	}
+	db.Find(&UserTrackTags)
+	if len(UserTrackTags) == 0 {
+		db.Create(&TestUserTrackTag)
+	}
+	db.Find(&UserChats)
+	if len(UserChats) == 0 {
+		db.Create(&TestUserChat)
+	}
+	db.Find(&UserTokens)
+	if len(UserTokens) == 0 {
+		db.Create(&TestUserToken)
+	}
+	return nil
 }

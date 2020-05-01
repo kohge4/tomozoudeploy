@@ -6,8 +6,6 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/kohge4/spotify"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 const (

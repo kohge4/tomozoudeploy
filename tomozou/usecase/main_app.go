@@ -169,6 +169,9 @@ func (u UserProfileApplication) DisplayUsersByArtistName(artistName string) (int
 func (u UserProfileApplication) TrackTimeLine() ([]domain.UserTrackTag, error) {
 	nowplayingTrackTags, err := u.ItemRepository.ReadUserTrackTagByTagName("nowplaying")
 	if err != nil {
+		if err.Error() == "nil error" {
+			return nowplayingTrackTags, nil
+		}
 		return nil, err
 	}
 	//topTrackTags, err := u.ItemRepository.ReadUserTrackTagByTagName("toptrack")
