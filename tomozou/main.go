@@ -43,7 +43,7 @@ func main() {
 	r := gin.Default()
 
 	crs := cors.DefaultConfig()
-	crs.AllowOrigins = []string{"http://localhost:8080", "https://tomozoufront.firebaseapp.com", "https://ongakuconnection.com", "https://ongakuuconnection.firebaseapp.com/"}
+	crs.AllowOrigins = []string{"http://localhost:8080", "https://tomozoufront.firebaseapp.com", "https://ongakuconnection.com", "https://ongakuuconnection.firebaseapp.com/", "https://ongakuconnectionsns.web.app/"}
 	crs.AllowHeaders = []string{"Origin, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"}
 	r.Use(cors.New(crs))
 
