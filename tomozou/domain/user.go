@@ -3,7 +3,7 @@ package domain
 import "time"
 
 type User struct {
-	ID       int    `gorm:"not null;AUTO_INCREMENT" json:"id"`
+	ID       int    `gorm:"primary_key;not null;AUTO_INCREMENT" json:"id"`
 	SocialID string `gorm:"not null" json:"social_id"`
 	Name     string `gorm:"not null" json:"name"`
 	Auth     string `gorm:"not null" json:"auth"`

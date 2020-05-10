@@ -3,13 +3,13 @@ CREATE DATABASE tomozou;
 use tomozou;
 
 CREATE TABLE `user` (
-    `id` int(11),
-    `social_id` varchar(255),
-    `name` varchar(255),
+    id int(11),
+    social_id varchar(255),
+    name varchar(255),
     `auth` varchar(255),
     `image` varchar(255),
     PRIMARY KEY (`id`),
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
+) ENGINE = InnoDB;
 
 CREATE TABLE `artist` (
     `id` int(11),
@@ -18,7 +18,7 @@ CREATE TABLE `artist` (
     `image` varchar(255),
     `created_at` datetime(6),
     PRIMARY KEY (`id`),
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
+) ENGINE = InnoDB;
 
 CREATE TABLE `user_artist_tag` (
     `id` int(11),
@@ -31,7 +31,7 @@ CREATE TABLE `user_artist_tag` (
     `artist_name` varchar(255),
     `url` varchar(255),
     PRIMARY KEY (`id`),
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
+) ENGINE = InnoDB;
 
 CREATE TABLE `track` (
     `id` int(11),
@@ -40,7 +40,7 @@ CREATE TABLE `track` (
     `artist_id` int(11),
     `artist_name` varchar(255),
     PRIMARY KEY (`id`),
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
+) ENGINE = InnoDB;
 
 
 CREATE TABLE `user_track_tag` (
@@ -55,7 +55,7 @@ CREATE TABLE `user_track_tag` (
     `track_social_id` varchar(255),
     `artist_name` varchar(255),
     PRIMARY KEY (`id`),
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
+) ENGINE = InnoDB;
 
 
 CREATE TABLE `token` (
@@ -67,7 +67,7 @@ CREATE TABLE `token` (
     `refresh_token` varchar(255),
     `expiry` datetime(6),
     PRIMARY KEY (`id`),
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
+) ENGINE = InnoDB;
 
 
 CREATE TABLE `user_chat` (
@@ -77,4 +77,17 @@ CREATE TABLE `user_chat` (
     `comment` varchar(255),
     `created_at` datetime(6),
     PRIMARY KEY (`id`),
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;
+) ENGINE = InnoDB;
+
+
+CREATE TABLE `track_comment` (
+    `id` int(11),
+    `track_id` int(11),
+    `user_id` int(11),
+    `social_id` varchar(255),
+    `comment` varchar(255),
+    `created_at` datetime(6),
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`track_id`)
+      REFERENCES `track(id)`
+) ENGINE = InnoDB;

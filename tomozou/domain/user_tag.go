@@ -2,6 +2,7 @@ package domain
 
 import "time"
 
+// UserArtistTagFull
 type UserArtistTag struct {
 	ID int `gorm:"column:id;not null;AUTO_INCREMENT" json:"id"`
 
@@ -16,6 +17,7 @@ type UserArtistTag struct {
 	Image      string `gorm:"column:image" json:"image"`
 }
 
+// UserArtistTag
 type UserArtistTagIn struct {
 	ID int `gorm:"column:id;not null;AUTO_INCREMENT" json:"id"`
 

@@ -79,6 +79,24 @@ func main() {
 		auth.GET("/nowplaying", userProfileAppImpl.NowPlaying)
 	}
 
+	rTrk := r.Group("/comment")
+	{
+		rTrk.GET("/add/track/:trackID", func(c *gin.Context) {
+			trackIDString := c.Param("trackID")
+			trackID, _ := strconv.Atoi(trackIDString)
+			//track := []domain.UserTrackTag{}
+			//fmt.Println(trackID)
+			c.JSON(200, gin.H{"id": trackID})
+		})
+		rTrk.POST("/comment/add/track/:trackID", func(c *gin.Context) {
+			trackIDString := c.Param("trackID")
+			trackID, _ := strconv.Atoi(trackIDString)
+			//track := []domain.UserTrackTag{}
+			//fmt.Println(trackID)
+			c.JSON(200, gin.H{"id": trackID})
+		})
+	}
+
 	// 開発用: データ確認エンドポイント
 	devUserRepo := userrepoimpl.NewDevUserRepo(gormConn)
 	rDev := r.Group("/dev")
@@ -112,13 +130,29 @@ func main() {
 			//devUserRepo.DB.Raw("SELECT * FROM user_track_tag JOIN track ON user_track_tag.track_id = track.id").scan()
 			c.JSON(200, track)
 		})
-		rDev.GET("/tracktag/:userID", func(c *gin.Context) {
-			userID := c.Param("userID")
-			id, _ := strconv.Atoi(userID)
-			track := []domain.UserTrackTag{}
-			devUserRepo.DB.Where("user_id = ?", id).Find(&track)
-			c.JSON(200, track)
+		rDev.GET("/trackjoin", func(c *gin.Context) {
+			//track := []domain.UserTrackTag{}
+			track := domain.TrackResp{}
+			//devUserRepo.DB.Raw("SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id").Scan(&track)
+			devUserRepo.DB.Raw("SELECT * FROM user_track_tags JOIN users ON user_track_tags.user_id = users.id").Scan(&track)
+			c.JSON(200, track.UserTrackTag.ArtistName)
 		})
+		/*
+			rDev.GET("/trackcomment", func(c *gin.Context) {
+				trackCommentFull := []domain.TrackCommentFull{}
+				devUserRepo.DB.Table("track_comments")
+					.Select("track_comment.id, track_comment.user_id,track_comment.track_id,track_comment.comment,track_comment.created_at, track.social_id, track.name, track.artist_name, track.artist_id")
+					.JOINS("left join track on track.id = track_comment.track_id").Scan(&trackComment)
+				c.JSON(200, trackCommentFull)
+			})
+			rDev.GET("/tracktag/:userID", func(c *gin.Context) {
+				userID := c.Param("userID")
+				id, _ := strconv.Atoi(userID)
+				track := []domain.UserTrackTag{}
+				devUserRepo.DB.Where("user_id = ?", id).Find(&track)
+				c.JSON(200, track)
+			})
+		*/
 		rDev.GET("/mytracktag", userProfileAppImpl.DebugTrackTag)
 		rDev.GET("/timeline", userProfileAppImpl.TrackTimeLine)
 		rDev.GET("/userdata", func(c *gin.Context) {

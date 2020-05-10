@@ -19,7 +19,7 @@ var TestArtist = domain.Artist{
 }
 
 var TestTrack = domain.Track{
-	ID:         0,
+	ID:         1,
 	SocialID:   "socialtrack",
 	Name:       "testtrack",
 	ArtistName: "testMans",
@@ -45,6 +45,12 @@ var TestUserTrackTag = domain.UserTrackTag{
 	ArtistName:    "testMans",
 	TrackName:     "testtrack",
 	TrackSocialID: "socialtrack",
+}
+
+var TestTrackComment = domain.TrackComment{
+	UserID:  1,
+	TrackID: 1,
+	Comment: "pop",
 }
 
 var TestUserChat = domain.UserChat{}
