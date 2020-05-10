@@ -101,50 +101,6 @@ func (h *SpotifyHandler) deleteUserArtistInfo(userID int) error {
 	return nil
 }
 
-/*
-func (h *SpotifyHandler) saveRecentlyPlayedTracks(useraID int) error {
-	// あとで
-	//timerange := "short"
-	limit := 5
-	opt := &spotify.RecentlyPlayedOptions{
-		//Timerange: &timerange,
-		Limit: limit,
-	}
-
-	results, err := h.Client.PlayerRecentlyPlayedOpt(opt)
-	if err != nil {
-		return err
-	}
-	/*
-		for _, result := range results.Items {
-			var artist *domain.Artist
-
-			artist, _ = h.SpotifyRepository.ReadArtistBySocialID(result.ID)
-			if artist == nil {
-				artist = &domain.Artist{
-					Name:     result.Name,
-					SocialID: result.ID,
-					Image:    result.Images[0].URL,
-				}
-				artist.ID, err = h.SpotifyRepository.SaveArtist(*artist)
-				if err != nil {
-					return err
-				}
-			}
-			tag := domain.UserArtistTag{
-				UserID:     userID,
-				ArtistID:   artist.ID,
-				TagName:    "recently_favorite_artist",
-				ArtistName: result.Name,
-				URL:        result.ExternalUrls.Spotify,
-				Image:      result.Images[0].URL,
-			}
-			h.SpotifyRepository.SaveUserArtistTag(tag)
-		}
-	return nil
-}
-*/
-
 func (h *SpotifyHandler) saveTopTracks(userID int) error {
 	/*
 		trackのデータを取得
@@ -182,11 +138,11 @@ func (h *SpotifyHandler) saveTopTracks(userID int) error {
 		}
 
 		trackIn = &domain.Track{
-			Name: result.Name,
+			TrackName: result.Name,
 			// TrackURL ではなくsocialID で url作る方針
-			SocialID:   result.ID,
-			ArtistName: artistIn.Name,
-			ArtistID:   artistIn.ID,
+			SocialTrackID: result.ID,
+			ArtistName:    artistIn.Name,
+			ArtistID:      artistIn.ID,
 		}
 		trackIn.ID, err = h.SpotifyRepository.SaveTrack(*trackIn)
 		if err != nil {
@@ -235,11 +191,11 @@ func (h *SpotifyHandler) saveNowPlayingTrack(userID int) error {
 		}
 	}
 	trackIn = &domain.Track{
-		Name: track.Name,
+		TrackName: track.Name,
 		// TrackURL ではなくsocialID で url作る方針
-		SocialID:   track.ID.String(),
-		ArtistName: artistIn.Name,
-		ArtistID:   artistIn.ID,
+		SocialTrackID: track.ID.String(),
+		ArtistName:    artistIn.Name,
+		ArtistID:      artistIn.ID,
 	}
 	// Track 保存に関する処理
 	// SimpleTrack を変換 => artist を保存 => tagとして track に持たせる
@@ -253,9 +209,9 @@ func (h *SpotifyHandler) saveNowPlayingTrack(userID int) error {
 		h.SpotifyRepository.SaveUserTrackTag(*userTrackTag)
 		return nil
 	}
-	if userTrackTag.TrackSocialID == lastTag[len(lastTag)-1].TrackSocialID {
-		return nil
-	}
+	//if userTrackTag.TrackSocialID == lastTag[len(lastTag)-1].TrackSocialID {
+	//return nil
+	//}
 	h.SpotifyRepository.SaveUserTrackTag(*userTrackTag)
 	return nil
 }

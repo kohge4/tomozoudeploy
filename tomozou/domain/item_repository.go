@@ -13,9 +13,9 @@ type ItemRepository interface {
 	ReadUserArtistTagByUserID(userID int) (interface{}, error)
 	ReadUserArtistTagByTagID(tagID int) (interface{}, error)
 
-	ReadUserTrackTagByUserID(userID int) ([]UserTrackTag, error)
-	ReadUserTrackTagByTagName(tagName string) ([]UserTrackTag, error)
-	ReadUserTrackTagByUserIDANDTagName(userID int, tagName string) ([]UserTrackTag, error)
+	ReadUserTrackTagByUserID(userID int) ([]UserTrackTagFull, error)
+	ReadUserTrackTagByTagName(tagName string) ([]UserTrackTagFull, error)
+	ReadUserTrackTagByUserIDANDTagName(userID int, tagName string) ([]UserTrackTagFull, error)
 
 	ReadUserIDByArtistID(artistID int) ([]int, error)
 	ReadUserIDByArtistName(artistName string) ([]int, error)

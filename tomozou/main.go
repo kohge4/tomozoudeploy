@@ -133,9 +133,9 @@ func main() {
 		rDev.GET("/trackjoin", func(c *gin.Context) {
 			//track := []domain.UserTrackTag{}
 			track := domain.TrackResp{}
-			//devUserRepo.DB.Raw("SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id").Scan(&track)
-			devUserRepo.DB.Raw("SELECT * FROM user_track_tags JOIN users ON user_track_tags.user_id = users.id").Scan(&track)
-			c.JSON(200, track.UserTrackTag.ArtistName)
+			devUserRepo.DB.Raw("SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id").Scan(&track)
+			//devUserRepo.DB.Raw("SELECT * FROM user_track_tags JOIN users ON user_track_tags.user_id = users.id").Scan(&track)
+			c.JSON(200, track)
 		})
 		/*
 			rDev.GET("/trackcomment", func(c *gin.Context) {

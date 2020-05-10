@@ -3,21 +3,21 @@ package domain
 import "time"
 
 type User struct {
-	ID       int    `gorm:"primary_key;not null;AUTO_INCREMENT" json:"id"`
-	SocialID string `gorm:"not null" json:"social_id"`
-	Name     string `gorm:"not null" json:"name"`
-	Auth     string `gorm:"not null" json:"auth"`
-	Image    string `gorm:"column:image" json:"image"`
+	ID           int    `gorm:"primary_key;not null;AUTO_INCREMENT" json:"id"`
+	SocialUserID string `gorm:"not null" json:"social_user_id"`
+	UserName     string `gorm:"column:user_name;not null" json:"user_name"`
+	Auth         string `gorm:"not null" json:"auth"`
+	UserImage    string `gorm:"column:user_image" json:"user_image"`
 
-	CreatedAt time.Time `gorm:"column:created_at;not null" json:"created_at"`
-	UpdatedAt time.Time `gorm:"column:updated_at;not null" json:"updated_at"`
+	CreatedAt time.Time `gorm:"column:user_created_at;not null" json:"user_created_at"`
+	UpdatedAt time.Time `gorm:"column:user_updated_at;not null" json:"user_updated_at"`
 }
 
 func NewUser(socialID string, name string, auth string, image string) User {
 	return User{
-		SocialID: socialID,
-		Name:     name,
-		Auth:     auth,
-		Image:    image,
+		SocialUserID: socialID,
+		UserName:     name,
+		Auth:         auth,
+		UserImage:    image,
 	}
 }

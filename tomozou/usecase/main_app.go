@@ -48,7 +48,7 @@ func (u *UserProfileApplication) CheckExistingUser() (*domain.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	socialUsers, err := u.UserRepository.ReadBySocialID(user.SocialID)
+	socialUsers, err := u.UserRepository.ReadBySocialID(user.SocialUserID)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ func (u UserProfileApplication) MyUserTrackTag(id int) (interface{}, error) {
 	return trackTag, nil
 }
 
-func (u UserProfileApplication) MyNowPlayingUserTrackTag(id int) (*domain.UserTrackTag, error) {
+func (u UserProfileApplication) MyNowPlayingUserTrackTag(id int) (*domain.UserTrackTagFull, error) {
 	// nowplaying を表示する用
 	trackTags, err := u.ItemRepository.ReadUserTrackTagByUserIDANDTagName(id, "nowplaying")
 	if err != nil {
@@ -113,7 +113,7 @@ func (u UserProfileApplication) MyNowPlayingUserTrackTag(id int) (*domain.UserTr
 	return &trackTags[len(trackTags)-1], nil
 }
 
-func (u *UserProfileApplication) CallNowPlayng(id int) (*domain.UserTrackTag, error) {
+func (u *UserProfileApplication) CallNowPlayng(id int) (*domain.UserTrackTagFull, error) {
 	// nowplayng を　外部から読み取った上で表示
 	_, err := u.UserRepository.Update(id)
 	if err != nil {
@@ -166,7 +166,7 @@ func (u UserProfileApplication) DisplayUsersByArtistName(artistName string) (int
 	return users, nil
 }
 
-func (u UserProfileApplication) TrackTimeLine() ([]domain.UserTrackTag, error) {
+func (u UserProfileApplication) TrackTimeLine() ([]domain.UserTrackTagFull, error) {
 	nowplayingTrackTags, err := u.ItemRepository.ReadUserTrackTagByTagName("nowplaying")
 	if err != nil {
 		if err.Error() == "nil error" {

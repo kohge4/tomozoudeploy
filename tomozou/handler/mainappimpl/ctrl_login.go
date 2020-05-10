@@ -36,7 +36,7 @@ func (u *UserProfileApplicationImpl) Callback(c *gin.Context) {
 	if existingUser != nil {
 		// すでに そのサービスでログインしたことあるユーザーの場合
 		c.Set("userid", existingUser.ID)
-		c.Set("user_name", existingUser.Name)
+		c.Set("user_name", existingUser.UserName)
 
 		err = u.UseCase.UpdateUser(existingUser.ID)
 		if err != nil {
@@ -51,6 +51,6 @@ func (u *UserProfileApplicationImpl) Callback(c *gin.Context) {
 		c.String(403, err.Error())
 	}
 	c.Set("userid", user.ID)
-	c.Set("user_name", user.Name)
+	c.Set("user_name", user.UserName)
 	u.AuthMiddleware.LoginHandler(c)
 }

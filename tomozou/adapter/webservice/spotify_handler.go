@@ -71,10 +71,10 @@ func (h *SpotifyHandler) User() (*domain.User, error) {
 	}
 
 	user := domain.User{
-		SocialID: me.ID,
-		Name:     me.DisplayName,
-		Auth:     "spotify",
-		Image:    image,
+		SocialUserID: me.ID,
+		UserName:     me.DisplayName,
+		Auth:         "spotify",
+		UserImage:    image,
 	}
 	return &user, nil
 }
@@ -117,27 +117,6 @@ func (h *SpotifyHandler) UpdateUserItemOpt(userID int, opt string) error {
 }
 
 func (h *SpotifyHandler) DebugItem(userID int) interface{} {
-	/*
-		//h.saveTopTracks(userID)
-		timerange := "short"
-		limit := 2
-		opt := &spotify.Options{
-			Timerange: &timerange,
-			Limit:     &limit,
-		}
-		// options がうまくいってなかった
-		results, err := h.Client.GetUserTopTracks2Opt(opt)
-		if err != nil {
-			return err
-		}
-		fmt.Println(*opt)
-	*/
-	/*
-		results, err := h.Client.PlayerRecentlyPlayed()
-		if err != nil {
-			return err
-		}
-	*/
 	var track *spotify.SimpleTrack
 
 	results, err := h.Client.PlayerCurrentlyPlaying()

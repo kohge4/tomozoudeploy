@@ -30,8 +30,8 @@ type MyTrackResponse struct {
 
 func NewMyTrackResponse(track *domain.UserTrackTag) *MyTrackResponse {
 	return &MyTrackResponse{
-		TrackURL:  newTrackURL(track.TrackSocialID),
-		TrackName: track.TrackName,
+		//TrackURL:  newTrackURL(track.TrackSocialID),
+		//TrackName: track.TrackName,
 		//TrackComment: track.TrackComment,
 	}
 }
@@ -57,7 +57,7 @@ type TrackResponse struct {
 	CreatedAt    time.Time `json:"created_at"`
 }
 
-func NewTrackTimeLineResponse(u *UserProfileApplicationImpl, trackTags []domain.UserTrackTag) *TrackTimeLineResponse {
+func NewTrackTimeLineResponse(u *UserProfileApplicationImpl, trackTags []domain.UserTrackTagFull) *TrackTimeLineResponse {
 	var items []TrackResponse
 	for _, tag := range trackTags {
 		items = append(items, NewTrackResponse(u, tag))
@@ -70,17 +70,17 @@ func NewTrackTimeLineResponse(u *UserProfileApplicationImpl, trackTags []domain.
 	}
 }
 
-func NewTrackResponse(u *UserProfileApplicationImpl, trackTag domain.UserTrackTag) TrackResponse {
+func NewTrackResponse(u *UserProfileApplicationImpl, trackTag domain.UserTrackTagFull) TrackResponse {
 	user, _ := u.UseCase.UserRepository.ReadByID(trackTag.UserID)
 	return TrackResponse{
 		TrackID:      trackTag.TrackID,
-		TrackURL:     newTrackURL(trackTag.TrackSocialID),
-		SpotifyID:    trackTag.TrackSocialID,
+		TrackURL:     newTrackURL(trackTag.Track.SocialTrackID),
+		SpotifyID:    trackTag.Track.SocialTrackID,
 		AppleID:      "",
 		UserID:       trackTag.UserID,
-		UserName:     user.Name,
-		UserImageURL: user.Image,
-		CreatedAt:    trackTag.CreatedAt,
+		UserName:     user.UserName,
+		UserImageURL: user.UserImage,
+		CreatedAt:    trackTag.UserTrackTag.CreatedAt,
 	}
 }
 

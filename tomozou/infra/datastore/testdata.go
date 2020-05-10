@@ -3,11 +3,11 @@ package datastore
 import "tomozou/domain"
 
 var TestUser = domain.User{
-	ID:       0,
-	SocialID: "test",
-	Name:     "taro",
-	Auth:     "spotify",
-	Image:    "",
+	ID:           0,
+	SocialUserID: "test",
+	UserName:     "taro",
+	Auth:         "spotify",
+	UserImage:    "",
 }
 
 var TestArtist = domain.Artist{
@@ -19,11 +19,11 @@ var TestArtist = domain.Artist{
 }
 
 var TestTrack = domain.Track{
-	ID:         1,
-	SocialID:   "socialtrack",
-	Name:       "testtrack",
-	ArtistName: "testMans",
-	ArtistID:   0,
+	ID:            1,
+	SocialTrackID: "socialtrack",
+	TrackName:     "testtrack",
+	ArtistName:    "testMans",
+	ArtistID:      1,
 }
 
 var TestUserArtistTag = domain.UserArtistTag{
@@ -37,14 +37,14 @@ var TestUserArtistTag = domain.UserArtistTag{
 }
 
 var TestUserTrackTag = domain.UserTrackTag{
-	ID:            0,
-	UserID:        0,
-	TrackID:       0,
-	ArtistID:      0,
-	TagName:       "nowplaying",
-	ArtistName:    "testMans",
-	TrackName:     "testtrack",
-	TrackSocialID: "socialtrack",
+	ID:      0,
+	UserID:  0,
+	TrackID: 0,
+	//ArtistID: 0,
+	TagName: "nowplaying",
+	//ArtistName:    "testMans",
+	//TrackName:     "testtrack",
+	//TrackSocialID: "socialtrack",
 }
 
 var TestTrackComment = domain.TrackComment{
