@@ -99,6 +99,7 @@ func main() {
 			c.JSON(200, gin.H{"id": trackID})
 		})
 		rTrk.POST("/trackcomment/add", userProfileAppImpl.AddTrackComment)
+		rTrk.GET("/get/trackcomment/:trackID", userProfileAppImpl.GetTrackCommentWithUserByTrackID)
 	}
 
 	// 開発用: データ確認エンドポイント
@@ -147,6 +148,7 @@ func main() {
 			c.JSON(200, trackComment)
 		})
 		rDev.POST("/addtrackcomment", userProfileAppImpl.AddTrackComment)
+		rDev.GET("/gettrackcomment/:trackID", userProfileAppImpl.GetTrackCommentWithUserByTrackID)
 		/*
 			rDev.GET("/trackcomment", func(c *gin.Context) {
 				trackCommentFull := []domain.TrackCommentFull{}

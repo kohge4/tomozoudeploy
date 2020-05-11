@@ -3,6 +3,7 @@ package domain
 import "time"
 
 type TrackComment struct {
+	//  column: track_comment_id とかにしたらうまく動くのでは
 	ID        int       `gorm:"primary_key;column:id" json:"id"`
 	UserID    int       `gorm:"column:user_id;not null" json:"user_id"`
 	TrackID   int       `gorm:"column:track_id;not null" json:"track_id"`
@@ -13,5 +14,10 @@ type TrackComment struct {
 type TrackCommentFull struct {
 	TrackComment
 	Track
+	User
+}
+
+type TrackCommentWithUser struct {
+	TrackComment
 	User
 }

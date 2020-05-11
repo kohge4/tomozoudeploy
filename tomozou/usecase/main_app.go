@@ -205,6 +205,14 @@ func (u UserProfileApplication) AddTrackComment(comment *domain.TrackComment) (*
 	return comment, nil
 }
 
+func (u UserProfileApplication) GetTrackCommentWithUserByTrackID(trackID int) (*[]domain.TrackCommentWithUser, error) {
+	trackCommentWithUser, err := u.ItemChildRepository.ReadTrackCommentWithUserByTrackID(trackID)
+	if err != nil {
+		return nil, err
+	}
+	return &trackCommentWithUser, nil
+}
+
 /*
 func (u UserProfileApplication) AddUserArtistTagComment(tagID int, comment string) (interface{}, error) {
 	var users []domain.User

@@ -15,7 +15,7 @@ var TestArtist = domain.Artist{
 	Name:       "testMans",
 	SocialID:   "socialartist",
 	Image:      "https://i.scdn.co/image/ab6775700000ee85b2bd4f64bd8c250aedd13123",
-	WebService: "spotofy",
+	Webservice: "spotofy",
 }
 
 var TestTrack = domain.Track{

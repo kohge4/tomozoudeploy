@@ -13,6 +13,24 @@ type WebServiceAccount interface {
 	UpdateUserItemOpt(userID int, opt string) error
 }
 
+type WebServiceConnector interface {
+	SearchTrack(searchObj *SearchObj) error
+	SearchTrackAndSaveTrackInfo(searchObj *SearchObj) error
+}
+
+type SearchObj struct {
+	SearchArtistName string
+	SearchTrackName  string
+	Results          []SearchResult
+}
+
+type SearchResult struct {
+	ArtistName string
+	TrackName  string
+	Accuracy   float64
+	Options    string
+}
+
 type WebService struct {
 	ServiceName       string
 	WebServiceAccount WebServiceAccount

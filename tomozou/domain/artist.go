@@ -10,9 +10,9 @@ type Artist struct {
 	Image     string    `gorm:"column:image;not null" json:"image"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 
-	WebService string `gorm:"column:webservice" json:"webservice"`
-	// SocialService string : spotify, apple　とか書く done したかも書く
-	// ArtistOption struct{} を作成して それに apple とかについて書いていく
+	Webservice    string `gorm:"column:webservice" json:"webservice"`
+	NameOpt       string `gorm:"column:name_opt" json:"name_opt"`
+	ArtistNameOpt string `gorm:"column:artist_name_opt" json:"artist_name_opt"`
 }
 
 func NewArtist(name string, socialID string, image string) Artist {
@@ -33,9 +33,14 @@ type ArtistTrackTag struct {
 
 // 対応したらこのタグを増やす
 type ArtistWebServiceTag struct {
-	ID         int    `gorm:"column:id;not null;AUTO_INCREMENT" json:"id"`
-	ArtistID   int    `gorm:"column:artist_id;not null" json:"artist_id"`
-	SocailID   string `gorm:"column:social_id;not null" json:"social_id"`
-	TagName    string `gorm:"column:tag_name" json:"tag_name"`
-	WebService string `gorm:"column:webservice;not null" json:"webservice"`
+	ID             int    `gorm:"column:id;not null;AUTO_INCREMENT" json:"id"`
+	ArtistID       int    `gorm:"column:artist_id;not null" json:"artist_id"`
+	SocailArtistID string `gorm:"column:social_artist_id;not null" json:"social_artist_id"`
+	WebServiceID   string `gorm:"column:webservice_id;not null" json:"webservice_id"`
+	//TagName        string `gorm:"column:tag_name" json:"tag_name"`
 }
+
+/*
+みたいな感じ
+{1,1,"13dtgy2943uh","apple"}
+*/

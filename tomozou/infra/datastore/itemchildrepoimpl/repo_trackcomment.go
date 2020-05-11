@@ -12,3 +12,10 @@ func (repo *ItemChildRepositoryImpl) SaveTrackComment(trackComment *domain.Track
 func (repo *ItemChildRepositoryImpl) ReadTrackComment() {
 	return
 }
+
+func (repo *ItemChildRepositoryImpl) ReadTrackCommentWithUserByTrackID(trackID int) ([]domain.TrackCommentWithUser, error) {
+	trackCommentWithUser := []domain.TrackCommentWithUser{}
+	sql := "SELECT * FROM track_comments JOIN users ON track_comments.user_id = users.id WHERE track_id = ?"
+	repo.DB.Raw(sql, trackID).Scan(&trackCommentWithUser)
+	return trackCommentWithUser, nil
+}
