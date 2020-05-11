@@ -18,12 +18,15 @@ type UserProfileApplication struct {
 
 	// spotify 関連の情報は まとめて 保存する (やりとりはない)
 	WebServiceAccount domain.WebServiceAccount
+
+	ItemChildRepository domain.ItemChildRepository
 }
 
-func NewUserProfileApplication(uR domain.UserRepository, iR domain.ItemRepository) *UserProfileApplication {
+func NewUserProfileApplication(uR domain.UserRepository, iR domain.ItemRepository, iCR domain.ItemChildRepository) *UserProfileApplication {
 	return &UserProfileApplication{
-		UserRepository: uR,
-		ItemRepository: iR,
+		UserRepository:      uR,
+		ItemRepository:      iR,
+		ItemChildRepository: iCR,
 	}
 }
 
@@ -197,6 +200,12 @@ func (u UserProfileApplication) AddUserArtistTagComment(tagID int, comment strin
 }
 */
 
+func (u UserProfileApplication) AddTrackComment(comment *domain.TrackComment) (*domain.TrackComment, error) {
+	u.ItemChildRepository.SaveTrackComment(comment)
+	return comment, nil
+}
+
+/*
 func (u UserProfileApplication) AddUserArtistTagComment(tagID int, comment string) (interface{}, error) {
 	var users []domain.User
 
@@ -204,3 +213,4 @@ func (u UserProfileApplication) AddUserArtistTagComment(tagID int, comment strin
 }
 
 func (u UserProfileApplication) DisplayNumberOfUserArtistTag() {}
+*/

@@ -12,6 +12,7 @@ import (
 	"tomozou/handler/mainappimpl"
 	"tomozou/infra/datastore"
 	"tomozou/infra/datastore/chatrepoimpl"
+	"tomozou/infra/datastore/itemchildrepoimpl"
 	"tomozou/infra/datastore/itemrepoimpl"
 	"tomozou/infra/datastore/userrepoimpl"
 	"tomozou/middleware/auth"
@@ -28,7 +29,9 @@ func main() {
 	userRepo := userrepoimpl.NewUserRepositoryImpl(gormConn)
 	itemRepo := itemrepoimpl.NewItemRepositoryImpl(gormConn)
 
-	useCase := usecase.NewUserProfileApplication(userRepo, itemRepo)
+	itemChildRepo := itemchildrepoimpl.NewItemChildRepositoryImpl(gormConn)
+
+	useCase := usecase.NewUserProfileApplication(userRepo, itemRepo, itemChildRepo)
 
 	spotifyHandler := webservice.NewSpotifyHandler(userRepo, itemRepo, gormConn)
 	authMiddleware := auth.AuthUser()
@@ -95,6 +98,7 @@ func main() {
 			//fmt.Println(trackID)
 			c.JSON(200, gin.H{"id": trackID})
 		})
+		rTrk.POST("/trackcomment/add", userProfileAppImpl.AddTrackComment)
 	}
 
 	// 開発用: データ確認エンドポイント
@@ -132,11 +136,17 @@ func main() {
 		})
 		rDev.GET("/trackjoin", func(c *gin.Context) {
 			//track := []domain.UserTrackTag{}
-			track := domain.TrackResp{}
+			track := domain.UserTrackTagFull{}
 			devUserRepo.DB.Raw("SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id").Scan(&track)
 			//devUserRepo.DB.Raw("SELECT * FROM user_track_tags JOIN users ON user_track_tags.user_id = users.id").Scan(&track)
 			c.JSON(200, track)
 		})
+		rDev.GET("/trackcomment", func(c *gin.Context) {
+			trackComment := []domain.TrackComment{}
+			devUserRepo.DB.Find(&trackComment)
+			c.JSON(200, trackComment)
+		})
+		rDev.POST("/addtrackcomment", userProfileAppImpl.AddTrackComment)
 		/*
 			rDev.GET("/trackcomment", func(c *gin.Context) {
 				trackCommentFull := []domain.TrackCommentFull{}

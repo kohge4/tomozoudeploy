@@ -19,9 +19,3 @@ type TrackWebServiceTag struct {
 	TrackID      int
 	WebServiceID string
 }
-
-type TrackResp struct {
-	UserTrackTag
-	User
-	Track
-}
