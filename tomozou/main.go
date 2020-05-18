@@ -1,13 +1,18 @@
 package main
 
 import (
+	"context"
+	"fmt"
+	"io/ioutil"
+	"net/url"
+	"os"
+	"reflect"
 	"strconv"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-
-	"tomozou/adapter/webservice"
+	"tomozou/adapter/webservice/appleadapter"
+	"tomozou/adapter/webservice/spotifyadapter"
 	"tomozou/domain"
+	"tomozou/handler/backgroundexec/connectorappimpl"
 	"tomozou/handler/chatappimpl"
 	"tomozou/handler/mainappimpl"
 	"tomozou/infra/datastore"
@@ -17,6 +22,12 @@ import (
 	"tomozou/infra/datastore/userrepoimpl"
 	"tomozou/middleware/auth"
 	"tomozou/usecase"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/google/go-querystring/query"
+	applemusic "github.com/kohge4/go-apple-music-sdk"
+	"github.com/kohge4/go-apple-music-sdk/token"
 )
 
 func main() {
@@ -33,7 +44,7 @@ func main() {
 
 	useCase := usecase.NewUserProfileApplication(userRepo, itemRepo, itemChildRepo)
 
-	spotifyHandler := webservice.NewSpotifyHandler(userRepo, itemRepo, gormConn)
+	spotifyHandler := spotifyadapter.NewSpotifyHandler(userRepo, itemRepo, gormConn)
 	authMiddleware := auth.AuthUser()
 
 	userProfileAppImpl := mainappimpl.UserProfileApplicationImpl{
@@ -42,6 +53,38 @@ func main() {
 		Handler:        spotifyHandler,
 		AuthMiddleware: authMiddleware,
 	}
+
+	secret, err := ioutil.ReadFile("./settings/AuthKey_BQC7LLSNCB.p8")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	gen := token.Generator{
+		KeyId:  "BQC7LLSNCB",
+		TeamId: "4QLW4H766S",
+		//TTL:    ttl,
+		Secret: secret,
+	}
+	t, err := gen.Generate()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	//appleToken := "eyJhbGciOiJFUzI1NiIsImtpZCI6IkJRQzdMTFNOQ0IifQ.eyJleHAiOjE1ODk0NTcyNzEsImlhdCI6MTU4OTQ1MzY3MSwiaXNzIjoiNFFMVzRINzY2UyJ9.EnMNFqN8UL3fOy35titOa7xbYFaCwPuMMF8DSRooTGCAHUk6EWSkWYQ0PAFV9yVNnSbL8YvWNMdG0am7-b-vCA"
+	appleToken := t
+	apiToken := appleadapter.WebAPIToken{
+		AccessToken: appleToken,
+	}
+	appleConfig := appleadapter.WebServiceConfig{
+		Token: &apiToken,
+	}
+	appleHandler := appleadapter.NewAppleHandlerByConfigToken(gormConn, appleConfig, itemChildRepo)
+	ctx := context.Background()
+	fmt.Println(appleHandler)
+	connectorAppImpl := connectorappimpl.ConnectorApplicationImpl{
+		AppleHandler: appleHandler,
+	}
+	// ======================================
 
 	r := gin.Default()
 
@@ -149,22 +192,34 @@ func main() {
 		})
 		rDev.POST("/addtrackcomment", userProfileAppImpl.AddTrackComment)
 		rDev.GET("/gettrackcomment/:trackID", userProfileAppImpl.GetTrackCommentWithUserByTrackID)
-		/*
-			rDev.GET("/trackcomment", func(c *gin.Context) {
-				trackCommentFull := []domain.TrackCommentFull{}
-				devUserRepo.DB.Table("track_comments")
-					.Select("track_comment.id, track_comment.user_id,track_comment.track_id,track_comment.comment,track_comment.created_at, track.social_id, track.name, track.artist_name, track.artist_id")
-					.JOINS("left join track on track.id = track_comment.track_id").Scan(&trackComment)
-				c.JSON(200, trackCommentFull)
-			})
-			rDev.GET("/tracktag/:userID", func(c *gin.Context) {
-				userID := c.Param("userID")
-				id, _ := strconv.Atoi(userID)
-				track := []domain.UserTrackTag{}
-				devUserRepo.DB.Where("user_id = ?", id).Find(&track)
-				c.JSON(200, track)
-			})
-		*/
+
+		// ===================== apple connector 用
+		rDev.GET("/apple/tracktag", func(c *gin.Context) {
+			tag := []domain.TrackWebServiceTag{}
+			devUserRepo.DB.Find(&tag)
+			c.JSON(200, tag)
+		})
+		rDev.GET("/apple/connector", connectorAppImpl.AppleConnectorByTrack)
+		rDev.GET("/ap/search/:word", func(c *gin.Context) {
+			//word := c.Param("word")
+			// https://api.music.apple.com/v1/catalog/jp/search?term=cero+orphans&types=songs
+			// term=cero%2Borphans&types=songs
+			searchOpt := &applemusic.SearchOptions{
+				Term: "james+bro",
+				//Types: "songs",
+			}
+			u := fmt.Sprintf("v1/catalog/%s/search", "jp")
+			u, err := addOptions(u, searchOpt)
+			fmt.Println(u)
+			storefronts, _, err := appleHandler.Client.Catalog.Search(ctx, "jp", searchOpt)
+			if err != nil {
+				c.String(401, err.Error())
+			}
+			resp := storefronts.Results.Albums.Data
+			c.JSON(200, resp)
+		})
+		// ========================
+
 		rDev.GET("/mytracktag", userProfileAppImpl.DebugTrackTag)
 		rDev.GET("/timeline", userProfileAppImpl.TrackTimeLine)
 		rDev.GET("/userdata", func(c *gin.Context) {
@@ -199,4 +254,30 @@ func main() {
 		rChat.GET("/list/:artistID", chatAppImpl.DisplayChatListByArtist)
 	}
 	r.Run(":8080")
+}
+
+func addOptions(s string, opt interface{}) (string, error) {
+	v := reflect.ValueOf(opt)
+	if v.Kind() == reflect.Ptr && v.IsNil() {
+		return s, nil
+	}
+	fmt.Println("v", v)
+
+	u, err := url.Parse(s)
+	if err != nil {
+		return s, err
+	}
+	fmt.Println("u1", u)
+
+	qs, err := query.Values(opt)
+	if err != nil {
+		return s, err
+	}
+	fmt.Println("qs", qs)
+
+	u.RawQuery = qs.Encode()
+	fmt.Println("qRRR", u.RawQuery)
+	nu, _ := url.QueryUnescape(u.String())
+	fmt.Println("nununu", nu)
+	return u.String(), nil
 }

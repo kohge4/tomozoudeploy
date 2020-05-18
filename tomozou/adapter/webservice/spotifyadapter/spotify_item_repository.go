@@ -1,4 +1,4 @@
-package webservice
+package spotifyadapter
 
 import (
 	"tomozou/domain"
@@ -209,9 +209,6 @@ func (h *SpotifyHandler) saveNowPlayingTrack(userID int) error {
 		h.SpotifyRepository.SaveUserTrackTag(*userTrackTag)
 		return nil
 	}
-	//if userTrackTag.TrackSocialID == lastTag[len(lastTag)-1].TrackSocialID {
-	//return nil
-	//}
 	h.SpotifyRepository.SaveUserTrackTag(*userTrackTag)
 	return nil
 }

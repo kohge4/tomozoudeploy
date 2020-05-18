@@ -53,6 +53,11 @@ var TestTrackComment = domain.TrackComment{
 	Comment: "pop",
 }
 
+var TestTrackWebServiceTag = domain.TrackWebServiceTag{
+	TrackID:       1,
+	SocialTrackID: "popopo",
+}
+
 var TestUserChat = domain.UserChat{}
 
 var TestUserToken = domain.UserToken{}

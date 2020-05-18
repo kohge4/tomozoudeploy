@@ -21,3 +21,17 @@ type TrackCommentWithUser struct {
 	TrackComment
 	User
 }
+
+// 対応したらこのタグを増やす
+type TrackWebServiceTag struct {
+	ID            int    `gorm:"primary_key;column:id" json:"id"`
+	TrackID       int    `gorm:"column:track_id;not null" json:"track_id"`
+	WebServiceID  string `gorm:"column:webservice_id" json:"webservice_id"`
+	SocialTrackID string `gorm:"column:sub_social_track_id" json:"sub_social_track_id"`
+	SocialURL     string `gorm:"column:social_url" json:"social_url"`
+}
+
+type TrackWithTrackWebServiceTag struct {
+	Track
+	TrackWebServiceTag
+}

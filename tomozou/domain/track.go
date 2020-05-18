@@ -4,6 +4,7 @@ type Track struct {
 	ID            int    `gorm:"primary_key;column:id" json:"id"`
 	SocialTrackID string `gorm:"column:social_track_id;not null" json:"social_track_id"`
 	TrackName     string `gorm:"column:track_name;not null" json:"track_name"`
+	AlbumName     string `gorm:"column:album_name" json:"album_name"`
 
 	ArtistName string `gorm:"column:arttist_name;not null" json:"artist_name"`
 	ArtistID   int    `gorm:"column:arttist_id;not null" json:"artist_id"`
@@ -17,14 +18,6 @@ type Track struct {
 
 func (t *Track) UserTrackTag(userID int, tagName string) *UserTrackTag {
 	return NewUserTrackTag(t, userID, tagName)
-}
-
-// 対応したらこのタグを増やす
-type TrackWebServiceTag struct {
-	ID            int    `gorm:"primary_key;column:id" json:"id"`
-	TrackID       int    `gorm:"column:track_id;not null" json:"track_id"`
-	WebServiceID  string `gorm:"column:webservice_id;not null" json:"webservice_id"`
-	SocialTrackID string `gorm:"column:sub_social_track_id;not null" json:"sub_social_track_id"`
 }
 
 /*

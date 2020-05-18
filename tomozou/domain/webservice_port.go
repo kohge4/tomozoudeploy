@@ -14,21 +14,29 @@ type WebServiceAccount interface {
 }
 
 type WebServiceConnector interface {
-	SearchTrack(searchObj *SearchObj) error
+	SearchWebServiceItem(searchObj *SearchObj) error
+	SearchWebServiceItemAndCreateItemTag(searchObj *SearchObj) error
 	SearchTrackAndSaveTrackInfo(searchObj *SearchObj) error
 }
 
 type SearchObj struct {
+	SearchKey        string
 	SearchArtistName string
 	SearchTrackName  string
+	ItemType         string
+	ItemID           int
 	Results          []SearchResult
 }
 
 type SearchResult struct {
-	ArtistName string
-	TrackName  string
-	Accuracy   float64
-	Options    string
+	ResultKey   string
+	ArtistName  string
+	TrackName   string
+	SocialID    string
+	URL         string
+	OtherResult string
+	Accuracy    float64
+	Options     string
 }
 
 type WebService struct {
@@ -41,4 +49,8 @@ func NewWebService(name string, wSA WebServiceAccount) *WebService {
 		ServiceName:       name,
 		WebServiceAccount: wSA,
 	}
+}
+
+func (s *SearchResult) UpdateAccuracy() float64 {
+	return 1.0
 }

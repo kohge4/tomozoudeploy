@@ -1,4 +1,4 @@
-package webservice
+package spotifyadapter
 
 import (
 	"tomozou/domain"

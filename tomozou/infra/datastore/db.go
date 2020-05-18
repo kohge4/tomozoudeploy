@@ -38,6 +38,9 @@ func GormConn(driver string, dsn string) (*gorm.DB, error) {
 		db.CreateTable(&domain.TrackComment{})
 		//db.Model(&domain.TrackComment{}).Related(&domain.Track{})
 	}
+	if !db.HasTable(&domain.TrackWebServiceTag{}) {
+		db.CreateTable(&domain.TrackWebServiceTag{})
+	}
 
 	Constructor(db)
 	return db, nil
@@ -52,6 +55,7 @@ func Constructor(db *gorm.DB) error {
 	UserChats := []domain.UserChat{}
 	UserTokens := []domain.UserToken{}
 	TrackComments := []domain.TrackComment{}
+	TrackWebServiceTags := []domain.TrackWebServiceTag{}
 
 	//db.Find(&[]domain.User{})
 	db.Find(&Users)
@@ -89,6 +93,14 @@ func Constructor(db *gorm.DB) error {
 		//db.First(&trackIn)
 		//TestTrackComment.Track = trackIn
 		db.Create(&TestTrackComment)
+	}
+	db.Find(&UserTokens)
+	if len(UserTokens) == 0 {
+		db.Create(&TestUserToken)
+	}
+	db.Find(&TrackWebServiceTags)
+	if len(TrackWebServiceTags) == 0 {
+		db.Create(&TestTrackWebServiceTag)
 	}
 	return nil
 }
