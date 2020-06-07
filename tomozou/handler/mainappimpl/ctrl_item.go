@@ -9,12 +9,14 @@ import (
 func (u *UserProfileApplicationImpl) NowPlaying(c *gin.Context) {
 	userID, err := common.GetIDFromContext(c)
 	if err != nil {
-		c.String(403, err.Error())
+		c.JSON(403, err.Error())
+		return
 	}
 	// Handler から直接取ってくる方がいいかも => streaming
 	nowplayingTrackTag, err := u.UseCase.CallNowPlayng(userID)
 	if err != nil {
 		c.JSON(403, err.Error())
+		return
 	}
 	trackResp := NewTrackResponse(u, *nowplayingTrackTag)
 	c.JSON(200, trackResp)
