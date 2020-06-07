@@ -51,6 +51,17 @@ func NewWebService(name string, wSA WebServiceAccount) *WebService {
 	}
 }
 
-func (s *SearchResult) UpdateAccuracy() float64 {
-	return 1.0
+func (s *SearchObj) GetAccuracy(result *SearchResult) float64 {
+	originArtist := s.SearchArtistName
+	respArtist := result.ArtistName
+
+	originTrack := s.SearchTrackName
+	respTrack := result.TrackName
+	if originArtist == respArtist {
+		if originTrack == respTrack {
+			return 1.0
+		}
+		return 0.9
+	}
+	return 0.5
 }

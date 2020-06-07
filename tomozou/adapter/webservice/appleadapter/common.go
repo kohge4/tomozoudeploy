@@ -1,7 +1,6 @@
 package appleadapter
 
 import (
-	"fmt"
 	"tomozou/domain"
 
 	applemusic "github.com/kohge4/go-apple-music-sdk"
@@ -20,14 +19,19 @@ func updateSearchObjByAppleAPIResponse(r *applemusic.Search, searchObj *domain.S
 				t.Id,
 				t.Attributes.URL,
 			)
-			accuracy := searchResult.UpdateAccuracy()
-			if accuracy < 0.8 {
+			accuracy := searchObj.GetAccuracy(searchResult)
+			if accuracy > 0.9 {
+				searchResult.Accuracy = accuracy
+				searchObj.Results = []domain.SearchResult{*searchResult}
 				break
 			}
+			if accuracy < 0.8 {
+				continue
+			}
+			searchResult.Accuracy = accuracy
 			searchObj.Results = append(searchObj.Results, *searchResult)
 		}
 	}
-	fmt.Println(searchResult)
 	return searchObj
 }
 

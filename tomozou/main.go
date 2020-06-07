@@ -32,8 +32,8 @@ import (
 
 func main() {
 	DRIVER := "mysql"
-	DSN := "root:@(db:3306)/tomozou?charset=utf8&parseTime=True"
-	//DSN := "root:@unix(/cloudsql/ongakuconnection:asia-northeast1:ongkdb)/tomozoudb?charset=utf8&parseTime=True"
+	//DSN := "root:@(db:3306)/tomozou?charset=utf8&parseTime=True"
+	DSN := "root:@unix(/cloudsql/ongakuconnection:asia-northeast1:ongkdb)/tomozoudb?charset=utf8&parseTime=True"
 	//"ユーザー名:パスワード@unix(/cloudsql/インスタンス接続名)/DB名"
 
 	gormConn, _ := datastore.GormConn(DRIVER, DSN)
@@ -70,6 +70,9 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
+
+	fmt.Println("TOKEN")
+	fmt.Println(t)
 	//appleToken := "eyJhbGciOiJFUzI1NiIsImtpZCI6IkJRQzdMTFNOQ0IifQ.eyJleHAiOjE1ODk0NTcyNzEsImlhdCI6MTU4OTQ1MzY3MSwiaXNzIjoiNFFMVzRINzY2UyJ9.EnMNFqN8UL3fOy35titOa7xbYFaCwPuMMF8DSRooTGCAHUk6EWSkWYQ0PAFV9yVNnSbL8YvWNMdG0am7-b-vCA"
 	appleToken := t
 	apiToken := appleadapter.WebAPIToken{
@@ -82,7 +85,8 @@ func main() {
 	ctx := context.Background()
 	fmt.Println(appleHandler)
 	connectorAppImpl := connectorappimpl.ConnectorApplicationImpl{
-		AppleHandler: appleHandler,
+		AppleHandler:   appleHandler,
+		ItemRepository: itemRepo,
 	}
 	// ======================================
 
@@ -147,6 +151,7 @@ func main() {
 
 	// 開発用: データ確認エンドポイント
 	devUserRepo := userrepoimpl.NewDevUserRepo(gormConn)
+	devItemChildRepo := itemchildrepoimpl.NewItemChildRepositoryImpl(gormConn)
 	rDev := r.Group("/dev")
 	{
 		rDev.GET("/user", func(c *gin.Context) {
@@ -208,16 +213,20 @@ func main() {
 				Term: "james+bro",
 				//Types: "songs",
 			}
-			u := fmt.Sprintf("v1/catalog/%s/search", "jp")
-			u, err := addOptions(u, searchOpt)
-			fmt.Println(u)
-			storefronts, _, err := appleHandler.Client.Catalog.Search(ctx, "jp", searchOpt)
+			//u := fmt.Sprintf("v1/catalog/%s/search", "jp")
+			//u, err := addOptions(u, searchOpt)
+			//fmt.Println(u)
+			resp, _, err := appleHandler.Client.Catalog.Search(ctx, "jp", searchOpt)
 			if err != nil {
 				c.String(401, err.Error())
 			}
-			resp := storefronts.Results.Albums.Data
 			c.JSON(200, resp)
 		})
+		rDev.GET("/apple/tagjoin", func(c *gin.Context) {
+			tags, _ := devItemChildRepo.ReadTrackWithTrackWebServiceTagByTrackID(1)
+			c.JSON(200, tags)
+		})
+		rDev.GET("/apple/conn/createtag", connectorAppImpl.CreateAppleTrackWebServiceTagByTrackID)
 		// ========================
 
 		rDev.GET("/mytracktag", userProfileAppImpl.DebugTrackTag)

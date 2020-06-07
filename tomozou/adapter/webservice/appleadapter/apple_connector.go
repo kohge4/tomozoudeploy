@@ -2,6 +2,8 @@ package appleadapter
 
 import (
 	"context"
+	"fmt"
+	"strings"
 	"tomozou/domain"
 
 	applemusic "github.com/kohge4/go-apple-music-sdk"
@@ -14,10 +16,14 @@ func (h *AppleHandler) SearchWebServiceItem(searchObj *domain.SearchObj) error {
 
 func (h *AppleHandler) SearchWebServiceItemAndCreateItemTag(searchObj *domain.SearchObj) error {
 	// 関数で検索結果を判定
-	word := searchObj.SearchArtistName
-	//word := searchObj.SearchArtistName + "+" + searchObj.SearchTrackName
+	//word := searchObj.SearchTrackName
+	artistName := strings.Replace(searchObj.SearchArtistName, " ", "+", -1)
+	trackName := strings.Replace(searchObj.SearchTrackName, " ", "+", -1)
+
+	searchWord := trackName + "+" + artistName
+
 	searchOpt := &applemusic.SearchOptions{
-		Term: word,
+		Term: searchWord,
 	}
 
 	ctx := context.Background()
@@ -26,8 +32,14 @@ func (h *AppleHandler) SearchWebServiceItemAndCreateItemTag(searchObj *domain.Se
 		log.Debug().Str("%v", err.Error()).Msg("adapter/appleadapter/SearchWebServiceItemAndCreateItemTag")
 		return err
 	}
+	fmt.Println(r)
+
 	searchObj = updateSearchObjByAppleAPIResponse(r, searchObj)
-	//fmt.Println(r)
+	if len(searchObj.Results) == 0 {
+		log.Info().Str("searchResult", "legth is 0").Msg("adapter/appleadapter/SearchWebServiceItemAndCreateItemTag")
+		return nil
+	}
+
 	log.Info().Str("[CONNECTOR_IMPL] searchResult", searchObj.Results[0].URL).Msg("adapter/appleadapter/SearchWebServiceItemAndCreateItemTag")
 
 	for _, s := range searchObj.Results {
