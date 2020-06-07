@@ -55,9 +55,11 @@ func main() {
 	}
 
 	secret, err := ioutil.ReadFile("./settings/AuthKey_BQC7LLSNCB.p8")
+	// デプロイ時ここが原因でエラー => ローカルでしか使えない
+	// 本番環境の時どうするか
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		//os.Exit(1)
 	}
 	gen := token.Generator{
 		KeyId:  "BQC7LLSNCB",
@@ -68,7 +70,7 @@ func main() {
 	t, err := gen.Generate()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		//os.Exit(1)
 	}
 
 	fmt.Println("TOKEN")

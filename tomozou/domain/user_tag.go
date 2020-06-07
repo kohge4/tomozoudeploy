@@ -27,7 +27,7 @@ func NewUserArtistTag(userID int, artistID int, tagName string) UserArtistTag {
 }
 
 type UserTrackTag struct {
-	ID int `gorm:"column:id;not null;AUTO_INCREMENT" json:"id"`
+	ID      int `gorm:"column:id;not null;AUTO_INCREMENT" json:"id"`
 	UserID  int `gorm:"column:user_id;not null" json:"user_id"`
 	TrackID int `gorm:"column:track_id;not null" json:"track_id"`
 	//ArtistID  int       `gorm:"column:artist_id;not null" json:"artist_id"`
