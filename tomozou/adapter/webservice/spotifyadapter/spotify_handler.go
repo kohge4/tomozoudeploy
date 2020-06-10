@@ -70,13 +70,13 @@ func (h *SpotifyHandler) User() (*domain.User, error) {
 		image = images[0].URL
 	}
 
-	user := domain.User{
+	user := &domain.User{
 		SocialUserID: me.ID,
 		UserName:     me.DisplayName,
 		Auth:         "spotify",
 		UserImage:    image,
 	}
-	return &user, nil
+	return user, nil
 }
 
 func (h *SpotifyHandler) SaveUserItem(userID int) error {

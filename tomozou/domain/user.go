@@ -4,7 +4,7 @@ import "time"
 
 type User struct {
 	ID           int    `gorm:"primary_key;not null;AUTO_INCREMENT" json:"id"`
-	SocialUserID string `gorm:"not null" json:"social_user_id"`
+	SocialUserID string `gorm:"column:social_user_id" json:"social_user_id"`
 	UserName     string `gorm:"column:user_name;not null" json:"user_name"`
 	Auth         string `gorm:"not null" json:"auth"`
 	UserImage    string `gorm:"column:user_image" json:"user_image"`
