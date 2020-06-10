@@ -27,7 +27,7 @@ func (repo *UserRepositoryImpl) ReadBySocialID(socialID string) ([]domain.User, 
 
 func (repo *UserRepositoryImpl) ReadByID(id int) (domain.User, error) {
 	user := domain.User{}
-	repo.DB.Where("ID = ?", id).Find(&user)
+	repo.DB.Where("id = ?", id).Find(&user)
 	return user, nil
 }
 
