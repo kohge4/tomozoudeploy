@@ -4,6 +4,7 @@ import (
 	"tomozou/domain"
 
 	"github.com/kohge4/spotify"
+	"github.com/rs/zerolog/log"
 )
 
 func (h *SpotifyHandler) saveTopArtists(userID int) error {
@@ -192,7 +193,8 @@ func (h *SpotifyHandler) saveNowPlayingTrack(userID int) error {
 	}
 
 	trackIn, _ = h.SpotifyRepository.ReadTrackBySocialTrackID(track.ID.String())
-	if trackIn.SocialTrackID != track.ID.String() {
+	log.Info().Str("exTrack", trackIn.SocialTrackID).Str("nowplaying", track.ID.String()).Msg("CHECK DUPLICATE_TRACK")
+	if trackIn == nil {
 		// ここの条件本陽は nil の方が綺麗かも: var と domain.Track{} の違いを把握したい
 		trackIn = &domain.Track{
 			TrackName: track.Name,
@@ -211,6 +213,7 @@ func (h *SpotifyHandler) saveNowPlayingTrack(userID int) error {
 
 	userTrackTag := domain.NewUserTrackTag(trackIn, userID, "nowplaying")
 	lastTag, _ := h.SpotifyRepository.ReadUserTrackTagByUserIDANDTagName(userID, "nowplaying")
+	//log.Info().Str("exTrack", userTrac).Str("nowplaying", track.ID.String()).Msg("CHECK DUPLICATE_TRACK")
 	if len(lastTag) < 1 {
 		h.SpotifyRepository.SaveUserTrackTag(*userTrackTag)
 		return nil
