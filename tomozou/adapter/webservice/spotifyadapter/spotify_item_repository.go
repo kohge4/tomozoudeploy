@@ -190,19 +190,25 @@ func (h *SpotifyHandler) saveNowPlayingTrack(userID int) error {
 			return err
 		}
 	}
-	trackIn = &domain.Track{
-		TrackName: track.Name,
-		// TrackURL ではなくsocialID で url作る方針
-		SocialTrackID: track.ID.String(),
-		ArtistName:    artistIn.Name,
-		ArtistID:      artistIn.ID,
+
+	trackIn, _ = h.SpotifyRepository.ReadTrackBySocialTrackID(track.ID.String())
+	if trackIn.SocialTrackID != track.ID.String() {
+		// ここの条件本陽は nil の方が綺麗かも: var と domain.Track{} の違いを把握したい
+		trackIn = &domain.Track{
+			TrackName: track.Name,
+			// TrackURL ではなくsocialID で url作る方針
+			SocialTrackID: track.ID.String(),
+			ArtistName:    artistIn.Name,
+			ArtistID:      artistIn.ID,
+		}
+		// Track 保存に関する処理
+		// SimpleTrack を変換 => artist を保存 => tagとして track に持たせる
+		trackIn.ID, err = h.SpotifyRepository.SaveTrack(*trackIn)
+		if err != nil {
+			return err
+		}
 	}
-	// Track 保存に関する処理
-	// SimpleTrack を変換 => artist を保存 => tagとして track に持たせる
-	trackIn.ID, err = h.SpotifyRepository.SaveTrack(*trackIn)
-	if err != nil {
-		return err
-	}
+
 	userTrackTag := domain.NewUserTrackTag(trackIn, userID, "nowplaying")
 	lastTag, _ := h.SpotifyRepository.ReadUserTrackTagByUserIDANDTagName(userID, "nowplaying")
 	if len(lastTag) < 1 {
