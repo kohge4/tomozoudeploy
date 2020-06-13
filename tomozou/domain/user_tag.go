@@ -43,11 +43,7 @@ func NewUserTrackTag(track *Track, userID int, tagName string) *UserTrackTag {
 	return &UserTrackTag{
 		UserID:  userID,
 		TrackID: track.ID,
-		//ArtistID: track.ArtistID,
 		TagName: tagName,
-		//ArtistName:    track.ArtistName,
-		//TrackName:     track.Name,
-		//TrackSocialID: track.SocialID,
 	}
 }
 

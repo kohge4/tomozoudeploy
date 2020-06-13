@@ -5,6 +5,7 @@ import (
 	"tomozou/handler/common"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 func (u *UserProfileApplicationImpl) MyProfile(c *gin.Context) {
@@ -18,13 +19,18 @@ func (u *UserProfileApplicationImpl) MyProfile(c *gin.Context) {
 	}
 	tag, err := u.UseCase.MyUserArtistTag(userID)
 	if err != nil {
-		return
+		log.Debug().Str("ERROR", err.Error()).Msg("mainappimpl/MyUserArtistTag ")
+		//c.String(403, err.Error())
+		//return
 	}
 	nowplaying, err := u.UseCase.MyNowPlayingUserTrackTag(userID)
+	log.Debug().Interface("nowplaying", nowplaying).Msg("mainappimpl/MyNowPlaying ")
 	if err != nil {
-		return
+		log.Debug().Str("ERROR", err.Error()).Msg("mainappimpl/MyNowPlaying ")
+		//c.String(403, err.Error())
+		//return
 	}
-	trackResp := NewTrackResponse(u, *nowplaying)
+	trackResp := NewTrackResponse(u, nowplaying)
 	// userTrackTag 型の trackID  を用いて trackurlを作成する処理
 	//nowplaying, err := u.UseCase.
 
@@ -79,4 +85,20 @@ func (u *UserProfileApplicationImpl) MyTrack(c *gin.Context) {
 		c.String(403, err.Error())
 	}
 	c.JSON(200, tags)
+}
+
+func (u *UserProfileApplicationImpl) NowPlaying(c *gin.Context) {
+	userID, err := common.GetIDFromContext(c)
+	if err != nil {
+		c.JSON(403, err.Error())
+		return
+	}
+	// Handler から直接取ってくる方がいいかも => streaming
+	nowplayingTrackTag, err := u.UseCase.CallNowPlayng(userID)
+	if err != nil {
+		c.JSON(403, err.Error())
+		return
+	}
+	trackResp := NewTrackResponse(u, nowplayingTrackTag)
+	c.JSON(200, trackResp)
 }

@@ -194,26 +194,22 @@ func (h *SpotifyHandler) saveNowPlayingTrack(userID int) error {
 
 	trackIn, _ = h.SpotifyRepository.ReadTrackBySocialTrackID(track.ID.String())
 	log.Info().Str("exTrack", trackIn.SocialTrackID).Str("nowplaying", track.ID.String()).Msg("CHECK DUPLICATE_TRACK")
-	if trackIn == nil {
-		// ここの条件本陽は nil の方が綺麗かも: var と domain.Track{} の違いを把握したい
+	if trackIn.ID == 0 || trackIn == nil {
 		trackIn = &domain.Track{
-			TrackName: track.Name,
-			// TrackURL ではなくsocialID で url作る方針
+			TrackName:     track.Name,
 			SocialTrackID: track.ID.String(),
 			ArtistName:    artistIn.Name,
 			ArtistID:      artistIn.ID,
 		}
-		// Track 保存に関する処理
-		// SimpleTrack を変換 => artist を保存 => tagとして track に持たせる
 		trackIn.ID, err = h.SpotifyRepository.SaveTrack(*trackIn)
 		if err != nil {
 			return err
 		}
 	}
 
+	log.Info().Interface("TrackCheck", trackIn).Msg("CHECK_BEFORE_SAVE_USERTRACKTAG")
 	userTrackTag := domain.NewUserTrackTag(trackIn, userID, "nowplaying")
 	lastTag, _ := h.SpotifyRepository.ReadUserTrackTagByUserIDANDTagName(userID, "nowplaying")
-	//log.Info().Str("exTrack", userTrac).Str("nowplaying", track.ID.String()).Msg("CHECK DUPLICATE_TRACK")
 	if len(lastTag) < 1 {
 		h.SpotifyRepository.SaveUserTrackTag(*userTrackTag)
 		return nil

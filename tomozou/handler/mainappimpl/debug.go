@@ -17,7 +17,7 @@ func (u *UserProfileApplicationImpl) DebugTrackTag(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	trackResp := NewTrackResponse(u, *nowplaying)
+	trackResp := NewTrackResponse(u, nowplaying)
 	c.JSON(200, trackResp)
 }
 

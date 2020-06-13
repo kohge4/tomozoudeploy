@@ -28,6 +28,6 @@ func (u *UserProfileApplicationImpl) TrackTimeLine(c *gin.Context) {
 		trackTags = trackTags[(l - 50):]
 	}
 	response := NewTrackTimeLineResponse(u, trackTags)
-	log.Info().Str("[CTRL_MAIN]", "").Msg("mainappimpl/TrackTimeLine ")
+	log.Info().Interface("[CTRL_MAIN]", response).Msg("mainappimpl/TrackTimeLine ")
 	c.JSON(200, response)
 }

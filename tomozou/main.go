@@ -197,6 +197,14 @@ func main() {
 			devUserRepo.DB.Find(&trackComment)
 			c.JSON(200, trackComment)
 		})
+		rDev.GET("/uttag", func(c *gin.Context) {
+			//uttag, _ := itemRepo.ReadUserTrackTagByUserIDANDTagName(2, "nowplaying")
+			userTrackTags := []domain.UserTrackTagFull{}
+			sql := "SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id WHERE user_track_tags.user_id = ? AND user_track_tags.tag_name = ?"
+			//sql := "SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id WHERE user_track_tags.user_id = ? AND user_track_tags.tag_name = ?"
+			devUserRepo.DB.Raw(sql, 2, "toptrack").Scan(&userTrackTags)
+			c.JSON(200, userTrackTags)
+		})
 		rDev.POST("/addtrackcomment", userProfileAppImpl.AddTrackComment)
 		rDev.GET("/gettrackcomment/:trackID", userProfileAppImpl.GetTrackCommentWithUserByTrackID)
 

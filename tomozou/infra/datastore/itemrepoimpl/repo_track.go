@@ -15,6 +15,6 @@ func (repo *ItemRepositoryImpl) ReadTrackByTrackID(trackID int) (*domain.Track, 
 
 func (repo *ItemRepositoryImpl) ReadTrackBySocialTrackID(socialID string) (*domain.Track, error) {
 	track := &domain.Track{}
-	repo.DB.Where("social_tracl_id = ?", socialID).Find(track)
+	repo.DB.Where("social_track_id = ?", socialID).Find(track)
 	return track, nil
 }

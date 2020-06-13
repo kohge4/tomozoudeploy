@@ -60,7 +60,7 @@ type TrackResponse struct {
 func NewTrackTimeLineResponse(u *UserProfileApplicationImpl, trackTags []domain.UserTrackTagFull) *TrackTimeLineResponse {
 	var items []TrackResponse
 	for _, tag := range trackTags {
-		items = append(items, NewTrackResponse(u, tag))
+		items = append(items, NewTrackResponse(u, &tag))
 	}
 	// offset と length はなんかいい方法ありそう(option でまとめて引数とか)
 	return &TrackTimeLineResponse{
@@ -70,7 +70,10 @@ func NewTrackTimeLineResponse(u *UserProfileApplicationImpl, trackTags []domain.
 	}
 }
 
-func NewTrackResponse(u *UserProfileApplicationImpl, trackTag domain.UserTrackTagFull) TrackResponse {
+func NewTrackResponse(u *UserProfileApplicationImpl, trackTag *domain.UserTrackTagFull) TrackResponse {
+	if trackTag == nil {
+		return TrackResponse{}
+	}
 	user, _ := u.UseCase.UserRepository.ReadByID(trackTag.UserID)
 	return TrackResponse{
 		TrackID:      trackTag.TrackID,

@@ -1,7 +1,7 @@
 package domain
 
 type Track struct {
-	ID            int    `gorm:"primary_key;column:id" json:"id"`
+	ID            int    `gorm:"column:id" json:"id"`
 	SocialTrackID string `gorm:"column:social_track_id;not null" json:"social_track_id"`
 	TrackName     string `gorm:"column:track_name;not null" json:"track_name"`
 	AlbumName     string `gorm:"column:album_name" json:"album_name"`

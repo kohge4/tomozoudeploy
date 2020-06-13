@@ -38,6 +38,7 @@ func (repo *ItemRepositoryImpl) ReadUserTrackTagByUserIDANDTagName(userID int, t
 	userTrackTags := []domain.UserTrackTagFull{}
 	//repo.DB.Where("user_id = ? AND tag_name = ?", userID, tagName).Find(&userTrackTags)
 	sql := "SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id WHERE user_track_tags.user_id = ? AND user_track_tags.tag_name = ?"
+	//sql := "SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id WHERE user_track_tags.user_id = ? AND user_track_tags.tag_name = ?"
 	repo.DB.Raw(sql, userID, tagName).Scan(&userTrackTags)
 	if len(userTrackTags) == 0 {
 		return userTrackTags, fmt.Errorf("nil error")
