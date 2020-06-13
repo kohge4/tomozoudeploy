@@ -149,8 +149,7 @@ func (h *SpotifyHandler) saveTopTracks(userID int) error {
 		if err != nil {
 			return err
 		}
-
-		userTrackTag := domain.NewUserTrackTag(trackIn, userID, "toptrack")
+		userTrackTag := domain.NewUserTrackTag(trackIn, userID, "toptrack", 1)
 		h.SpotifyRepository.SaveUserTrackTag(*userTrackTag)
 		// 複数の arthist が 携わるトラックについてちゃんとやった方がいいかも
 	}
@@ -208,12 +207,16 @@ func (h *SpotifyHandler) saveNowPlayingTrack(userID int) error {
 	}
 
 	log.Info().Interface("TrackCheck", trackIn).Msg("CHECK_BEFORE_SAVE_USERTRACKTAG")
-	userTrackTag := domain.NewUserTrackTag(trackIn, userID, "nowplaying")
-	lastTag, _ := h.SpotifyRepository.ReadUserTrackTagByUserIDANDTagName(userID, "nowplaying")
-	if len(lastTag) < 1 {
+	var userTrackTag *domain.UserTrackTag
+	//lastTag, _ := h.SpotifyRepository.ReadUserTrackTagByUserIDANDTagName(userID, "nowplaying")
+	lastTag, _ := h.SpotifyRepository.ReadUserTrackTagByUserIDANDTagNameANDTrackID(userID, "nowplaying", trackIn.ID)
+	if len(lastTag) > 0 {
+		userTrackTag = domain.NewUserTrackTag(trackIn, userID, "nowplaying", lastTag[0].UserTrackTag.Count+1)
+		h.SpotifyRepository.DeleteUserTrackTag(lastTag[0].UserTrackTag)
 		h.SpotifyRepository.SaveUserTrackTag(*userTrackTag)
 		return nil
 	}
+	userTrackTag = domain.NewUserTrackTag(trackIn, userID, "nowplaying", 1)
 	h.SpotifyRepository.SaveUserTrackTag(*userTrackTag)
 	return nil
 }
@@ -224,4 +227,9 @@ func (h *SpotifyHandler) checkDupulicateArtist(socialID string) bool {
 		return false
 	}
 	return true
+}
+
+func (h *SpotifyHandler) updateNowplayingUserTrackTag(tag domain.UserTrackTag) {
+	h.SpotifyRepository.DeleteUserTrackTag(tag)
+	h.SpotifyRepository.SaveUserTrackTag(tag)
 }

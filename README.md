@@ -25,3 +25,6 @@
 - バックエンド: setting/const.go と main.go のDSN をローカル用に変更
 - フロント: axios　の basURL を変更
 - 作業環境: master ブランチにpush or pull request で デプロイされちゃうからそれ以外で
+
+## 作業メモ
+- DB について: cloudSQL(tomozoudb)を削除した場合, cloudSQL作り直し => 再デプロイしないと動かない

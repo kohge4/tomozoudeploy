@@ -33,17 +33,15 @@ type UserTrackTag struct {
 	//ArtistID  int       `gorm:"column:artist_id;not null" json:"artist_id"`
 	TagName   string    `gorm:"column:tag_name;not null" json:"tag_name"`
 	CreatedAt time.Time `gorm:"column:tag_created_at" json:"tag_created_at"`
-	//TrackComment string    `gorm:"column:track_comment" json:"track_comment"`
-	//ArtistName    string `gorm:"column:artist_name" json:"artist_name"`
-	//TrackName     string `gorm:"column:track_name" json:"track_name"`
-	//TrackSocialID string `gorm:"column:track_social_id" json:"track_social_id"`
+	Count     int       `gorm:"column:count;not null" json:"count"`
 }
 
-func NewUserTrackTag(track *Track, userID int, tagName string) *UserTrackTag {
+func NewUserTrackTag(track *Track, userID int, tagName string, count int) *UserTrackTag {
 	return &UserTrackTag{
 		UserID:  userID,
 		TrackID: track.ID,
 		TagName: tagName,
+		Count:   count,
 	}
 }
 

@@ -10,6 +10,11 @@ func (repo *ItemRepositoryImpl) SaveUserTrackTag(tag domain.UserTrackTag) error 
 	return nil
 }
 
+func (repo *ItemRepositoryImpl) DeleteUserTrackTag(tag domain.UserTrackTag) error {
+	repo.DB.Delete(&tag)
+	return nil
+}
+
 func (repo *ItemRepositoryImpl) ReadUserTrackTagByUserID(userID int) ([]domain.UserTrackTagFull, error) {
 	// nowplaying の 表示用
 	userTrackTags := []domain.UserTrackTagFull{}
@@ -40,6 +45,26 @@ func (repo *ItemRepositoryImpl) ReadUserTrackTagByUserIDANDTagName(userID int, t
 	sql := "SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id WHERE user_track_tags.user_id = ? AND user_track_tags.tag_name = ?"
 	//sql := "SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id WHERE user_track_tags.user_id = ? AND user_track_tags.tag_name = ?"
 	repo.DB.Raw(sql, userID, tagName).Scan(&userTrackTags)
+	if len(userTrackTags) == 0 {
+		return userTrackTags, fmt.Errorf("nil error")
+	}
+	return userTrackTags, nil
+}
+
+func (repo *ItemRepositoryImpl) ReadUserTrackTagByUserIDANDTagNameANDTrackID(userID int, tagName string, trackID int) ([]domain.UserTrackTagFull, error) {
+	userTrackTags := []domain.UserTrackTagFull{}
+	sql := "SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id WHERE user_track_tags.user_id = ? AND user_track_tags.tag_name = ? AND user_track_tags.track_id = ?"
+	repo.DB.Raw(sql, userID, tagName, trackID).Scan(&userTrackTags)
+	if len(userTrackTags) == 0 {
+		return userTrackTags, fmt.Errorf("nil error")
+	}
+	return userTrackTags, nil
+}
+
+func (repo *ItemRepositoryImpl) UpdateUserTrackTagByUserIDANDTagNameANDTrackID(userID int, tagName string, trackID int) ([]domain.UserTrackTagFull, error) {
+	userTrackTags := []domain.UserTrackTagFull{}
+	sql := "SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id WHERE user_track_tags.user_id = ? AND user_track_tags.tag_name = ? AND user_track_tags.track_id = ?"
+	repo.DB.Raw(sql, userID, tagName, trackID).Scan(&userTrackTags)
 	if len(userTrackTags) == 0 {
 		return userTrackTags, fmt.Errorf("nil error")
 	}

@@ -16,8 +16,8 @@ type Track struct {
 	// "spap", "sp", "ap"  とかで対応数を 長さで判断したい
 }
 
-func (t *Track) UserTrackTag(userID int, tagName string) *UserTrackTag {
-	return NewUserTrackTag(t, userID, tagName)
+func (t *Track) UserTrackTag(userID int, tagName string, count int) *UserTrackTag {
+	return NewUserTrackTag(t, userID, tagName, count)
 }
 
 /*

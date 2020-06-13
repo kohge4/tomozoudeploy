@@ -19,10 +19,13 @@ type ItemRepository interface {
 	ReadUserTrackTagByUserID(userID int) ([]UserTrackTagFull, error)
 	ReadUserTrackTagByTagName(tagName string) ([]UserTrackTagFull, error)
 	ReadUserTrackTagByUserIDANDTagName(userID int, tagName string) ([]UserTrackTagFull, error)
+	ReadUserTrackTagByUserIDANDTagNameANDTrackID(userID int, tagName string, trackID int) ([]UserTrackTagFull, error)
+	UpdateUserTrackTagByUserIDANDTagNameANDTrackID(userID int, tagName string, trackID int) ([]UserTrackTagFull, error)
 
 	ReadUserIDByArtistID(artistID int) ([]int, error)
 	ReadUserIDByArtistName(artistName string) ([]int, error)
 
 	//DeleteAllArtistByUserID(userID int) error
 	DeleteAllUserArtistTagsByUserID(userID int) error
+	DeleteUserTrackTag(UserTrackTag) error
 }

@@ -202,7 +202,7 @@ func main() {
 			userTrackTags := []domain.UserTrackTagFull{}
 			sql := "SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id WHERE user_track_tags.user_id = ? AND user_track_tags.tag_name = ?"
 			//sql := "SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id WHERE user_track_tags.user_id = ? AND user_track_tags.tag_name = ?"
-			devUserRepo.DB.Raw(sql, 2, "toptrack").Scan(&userTrackTags)
+			devUserRepo.DB.Raw(sql, 2, "nowplaying").Scan(&userTrackTags)
 			c.JSON(200, userTrackTags)
 		})
 		rDev.POST("/addtrackcomment", userProfileAppImpl.AddTrackComment)

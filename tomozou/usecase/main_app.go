@@ -117,7 +117,7 @@ func (u UserProfileApplication) MyNowPlayingUserTrackTag(id int) (*domain.UserTr
 }
 
 func (u *UserProfileApplication) CallNowPlayng(id int) (*domain.UserTrackTagFull, error) {
-	// nowplayng を　外部から読み取った上で表示
+	// nowplaying を　外部から読み取った上で表示
 	_, err := u.UserRepository.Update(id)
 	if err != nil {
 		// 最終更新日みたいなのを登録できるようにしたい
