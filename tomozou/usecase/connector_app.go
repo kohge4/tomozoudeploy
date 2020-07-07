@@ -1,6 +1,6 @@
 package usecase
 
-import "tomozou/domain"
+/*
 
 type ConnectorApplication struct {
 	Handler        WebServiceConnector
@@ -22,10 +22,10 @@ func (a *ConnectorApplication) CreateTrackWebserviceTagByWebService(serviceName 
 	}
 	if serviceName == "applemusic" {
 		// trackの名前 とかでいい感じに検索 => socialID を TrackWebServiceTag に追加
-		a.Handler.AppleConnector.SearchTrackAndSaveTrackInfo(&searchObj)
+		//a.Handler.AppleConnector.SearchTrackAndSaveTrackInfo(&searchObj)
 
 	} else if serviceName == "spotify" {
-		a.Handler.SpotifyConnector.SearchTrackAndSaveTrackInfo(&searchObj)
+		//a.Handler.SpotifyConnector.SearchTrackAndSaveTrackInfo(&searchObj)
 	}
 }
 
@@ -38,3 +38,5 @@ func (a *ConnectorApplication) CreateArtistWebserviceTagByWebService(serviceName
 	} else if serviceName == "spotify" {
 	}
 }
+
+*/

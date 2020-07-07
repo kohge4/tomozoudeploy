@@ -27,8 +27,8 @@ type SpotifyHandler struct {
 	Client        spotify.Client
 	DB            *gorm.DB
 
-	UserRepository    domain.UserRepository
-	SpotifyRepository domain.ItemRepository
+	UserRepository domain.UserRepository
+	ItemRepository domain.ItemRepository
 }
 
 //  認証　にも使用したいから domain.WebServiceAccount にしない
@@ -45,9 +45,9 @@ func NewSpotifyHandler(userRepo domain.UserRepository, spRepo domain.ItemReposit
 
 		Authenticator: Authenticator,
 
-		UserRepository:    userRepo,
-		SpotifyRepository: spRepo,
-		DB:                db,
+		UserRepository: userRepo,
+		ItemRepository: spRepo,
+		DB:             db,
 	}
 }
 

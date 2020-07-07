@@ -2,10 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"io/ioutil"
 	"net/url"
-	"os"
 	"reflect"
 	"strconv"
 
@@ -27,7 +24,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-querystring/query"
 	applemusic "github.com/kohge4/go-apple-music-sdk"
-	"github.com/kohge4/go-apple-music-sdk/token"
+	"github.com/kohge4/spotify"
 )
 
 func main() {
@@ -46,49 +43,21 @@ func main() {
 
 	spotifyHandler := spotifyadapter.NewSpotifyHandler(userRepo, itemRepo, gormConn)
 	authMiddleware := auth.AuthUser()
+	appleHandler := appleadapter.NewAppleHandlerByConfigToken(gormConn, nil, itemChildRepo)
 
 	userProfileAppImpl := mainappimpl.UserProfileApplicationImpl{
 		UseCase: useCase,
 
 		Handler:        spotifyHandler,
 		AuthMiddleware: authMiddleware,
+		Connector:      appleHandler,
 	}
 
-	secret, err := ioutil.ReadFile("./settings/AuthKey_BQC7LLSNCB.p8")
-	// デプロイ時ここが原因でエラー => ローカルでしか使えない
-	// 本番環境の時どうするか
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		//os.Exit(1)
-	}
-	gen := token.Generator{
-		KeyId:  "BQC7LLSNCB",
-		TeamId: "4QLW4H766S",
-		//TTL:    ttl,
-		Secret: secret,
-	}
-	t, err := gen.Generate()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		//os.Exit(1)
-	}
-
-	fmt.Println("TOKEN")
-	fmt.Println(t)
-	//appleToken := "eyJhbGciOiJFUzI1NiIsImtpZCI6IkJRQzdMTFNOQ0IifQ.eyJleHAiOjE1ODk0NTcyNzEsImlhdCI6MTU4OTQ1MzY3MSwiaXNzIjoiNFFMVzRINzY2UyJ9.EnMNFqN8UL3fOy35titOa7xbYFaCwPuMMF8DSRooTGCAHUk6EWSkWYQ0PAFV9yVNnSbL8YvWNMdG0am7-b-vCA"
-	appleToken := t
-	apiToken := appleadapter.WebAPIToken{
-		AccessToken: appleToken,
-	}
-	appleConfig := appleadapter.WebServiceConfig{
-		Token: &apiToken,
-	}
-	appleHandler := appleadapter.NewAppleHandlerByConfigToken(gormConn, appleConfig, itemChildRepo)
-	ctx := context.Background()
-	fmt.Println(appleHandler)
+	// =====諸説あり ========= connectorAppImpl 多分いらない
 	connectorAppImpl := connectorappimpl.ConnectorApplicationImpl{
-		AppleHandler:   appleHandler,
-		ItemRepository: itemRepo,
+		AppleHandler:        appleHandler,
+		ItemRepository:      itemRepo,
+		ItemChildRepository: itemChildRepo,
 	}
 	// ======================================
 
@@ -151,11 +120,17 @@ func main() {
 		rTrk.GET("/get/trackcomment/:trackID", userProfileAppImpl.GetTrackCommentWithUserByTrackID)
 	}
 
+	rConn := r.Group("/connector")
+	{
+		rConn.GET("/apple/:trackID", connectorAppImpl.CreateAppleTrackWebServiceTagByTrackID)
+	}
+
 	// 開発用: データ確認エンドポイント
 	devUserRepo := userrepoimpl.NewDevUserRepo(gormConn)
 	devItemChildRepo := itemchildrepoimpl.NewItemChildRepositoryImpl(gormConn)
 	rDev := r.Group("/dev")
 	{
+		// テーブル簡易確認
 		rDev.GET("/user", func(c *gin.Context) {
 			users, _ := devUserRepo.CheckUser()
 			c.JSON(200, users)
@@ -180,18 +155,6 @@ func main() {
 			devUserRepo.DB.Find(&tags)
 			c.JSON(200, tags)
 		})
-		rDev.GET("/tracktagresp", func(c *gin.Context) {
-			track := []domain.UserTrackTag{}
-			//devUserRepo.DB.Raw("SELECT * FROM user_track_tag JOIN track ON user_track_tag.track_id = track.id").scan()
-			c.JSON(200, track)
-		})
-		rDev.GET("/trackjoin", func(c *gin.Context) {
-			//track := []domain.UserTrackTag{}
-			track := domain.UserTrackTagFull{}
-			devUserRepo.DB.Raw("SELECT * FROM user_track_tags JOIN tracks ON user_track_tags.track_id = tracks.id JOIN users ON user_track_tags.user_id = users.id").Scan(&track)
-			//devUserRepo.DB.Raw("SELECT * FROM user_track_tags JOIN users ON user_track_tags.user_id = users.id").Scan(&track)
-			c.JSON(200, track)
-		})
 		rDev.GET("/trackcomment", func(c *gin.Context) {
 			trackComment := []domain.TrackComment{}
 			devUserRepo.DB.Find(&trackComment)
@@ -207,6 +170,32 @@ func main() {
 		})
 		rDev.POST("/addtrackcomment", userProfileAppImpl.AddTrackComment)
 		rDev.GET("/gettrackcomment/:trackID", userProfileAppImpl.GetTrackCommentWithUserByTrackID)
+		rDev.GET("/track/artists/:trackID", func(c *gin.Context) {
+			trackIDString := c.Param("trackID")
+			trackID, _ := strconv.Atoi(trackIDString)
+			t, _ := itemRepo.ReadTrackWithArtistListByTrackID(trackID)
+			c.JSON(200, t)
+		})
+		rDev.GET("/atag", func(c *gin.Context) {
+			t := []domain.ArtistWebServiceTag{}
+			devUserRepo.DB.Find(&t)
+			c.JSON(200, t)
+		})
+		//======SPOTIFY API 確認
+		rDev.GET("/spotify/toptrack", func(c *gin.Context) {
+			timerange := "short"
+			limit := 5
+			opt := &spotify.Options{
+				Timerange: &timerange,
+				Limit:     &limit,
+			}
+			results, err := userProfileAppImpl.Handler.Client.GetUserTopTracks2Opt(opt)
+			if err != nil {
+				c.String(401, err.Error())
+				return
+			}
+			c.JSON(200, results)
+		})
 
 		// ===================== apple connector 用
 		rDev.GET("/apple/tracktag", func(c *gin.Context) {
@@ -223,9 +212,7 @@ func main() {
 				Term: "james+bro",
 				//Types: "songs",
 			}
-			//u := fmt.Sprintf("v1/catalog/%s/search", "jp")
-			//u, err := addOptions(u, searchOpt)
-			//fmt.Println(u)
+			ctx := context.Background()
 			resp, _, err := appleHandler.Client.Catalog.Search(ctx, "jp", searchOpt)
 			if err != nil {
 				c.String(401, err.Error())
@@ -236,7 +223,12 @@ func main() {
 			tags, _ := devItemChildRepo.ReadTrackWithTrackWebServiceTagByTrackID(1)
 			c.JSON(200, tags)
 		})
-		rDev.GET("/apple/conn/createtag", connectorAppImpl.CreateAppleTrackWebServiceTagByTrackID)
+		rDev.GET("/apple/conn/createtag/:trackID", connectorAppImpl.CreateAppleTrackWebServiceTagByTrackID)
+		rDev.GET("/show/apple/:trackID", userProfileAppImpl.ShowAppleMusic)
+		rDev.GET("/apple/trackwebservicetag", func(c *gin.Context) {
+			tags, _ := devItemChildRepo.ReadTrackWithTrackWebServiceTagByTrackID(3)
+			c.JSON(200, tags)
+		})
 		// ========================
 
 		rDev.GET("/mytracktag", userProfileAppImpl.DebugTrackTag)
@@ -280,23 +272,14 @@ func addOptions(s string, opt interface{}) (string, error) {
 	if v.Kind() == reflect.Ptr && v.IsNil() {
 		return s, nil
 	}
-	fmt.Println("v", v)
-
 	u, err := url.Parse(s)
 	if err != nil {
 		return s, err
 	}
-	fmt.Println("u1", u)
-
 	qs, err := query.Values(opt)
 	if err != nil {
 		return s, err
 	}
-	fmt.Println("qs", qs)
-
 	u.RawQuery = qs.Encode()
-	fmt.Println("qRRR", u.RawQuery)
-	nu, _ := url.QueryUnescape(u.String())
-	fmt.Println("nununu", nu)
 	return u.String(), nil
 }

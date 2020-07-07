@@ -1,6 +1,8 @@
 package mainappimpl
 
 import (
+	"strconv"
+
 	"github.com/rs/zerolog/log"
 
 	"github.com/gin-gonic/gin"
@@ -29,5 +31,18 @@ func (u *UserProfileApplicationImpl) TrackTimeLine(c *gin.Context) {
 	}
 	response := NewTrackTimeLineResponse(u, trackTags)
 	log.Info().Interface("[CTRL_MAIN]", response).Msg("mainappimpl/TrackTimeLine ")
+	c.JSON(200, response)
+}
+
+// デバッグ用
+func (u *UserProfileApplicationImpl) ConnectorApple(c *gin.Context) {
+	trackIDString := c.Param("trackID")
+	trackID, _ := strconv.Atoi(trackIDString)
+	trackWebServiceTags, err := u.UseCase.TrackWebServiceTag(trackID)
+	if err != nil {
+		c.String(401, err.Error())
+		return
+	}
+	response := NewConnectedTracksResponse(trackWebServiceTags)
 	c.JSON(200, response)
 }

@@ -23,3 +23,16 @@ func (repo *ItemRepositoryImpl) ReadArtistBySocialID(socialID string) (*domain.A
 	fmt.Println("DUPLICATED ARTIST")
 	return artists[0], nil
 }
+
+func (repo *ItemRepositoryImpl) ReadArtistByArtistID(artistID int) (*domain.Artist, error) {
+	artists := []*domain.Artist{}
+	repo.DB.Where("id = ?", artistID).Find(&artists)
+	if len(artists) == 0 {
+		return nil, nil
+	}
+	if len(artists) == 1 {
+		return artists[0], nil
+	}
+	fmt.Println("DUPLICATED ARTIST")
+	return artists[0], nil
+}

@@ -16,15 +16,18 @@ type WebServiceAccount interface {
 type WebServiceConnector interface {
 	SearchWebServiceItem(searchObj *SearchObj) error
 	SearchWebServiceItemAndCreateItemTag(searchObj *SearchObj) error
-	SearchTrackAndSaveTrackInfo(searchObj *SearchObj) error
+	//SearchTrackAndSaveTrackInfo(searchObj *SearchObj) error
 }
 
 type SearchObj struct {
 	SearchKey        string
 	SearchArtistName string
 	SearchTrackName  string
+	ArtistNameOption string
+	TrackNameOption  string
 	ItemType         string
 	ItemID           int
+	Status           int
 	Results          []SearchResult
 }
 
@@ -35,7 +38,7 @@ type SearchResult struct {
 	SocialID    string
 	URL         string
 	OtherResult string
-	Accuracy    float64
+	Accuracy    int
 	Options     string
 }
 
@@ -51,17 +54,18 @@ func NewWebService(name string, wSA WebServiceAccount) *WebService {
 	}
 }
 
-func (s *SearchObj) GetAccuracy(result *SearchResult) float64 {
-	originArtist := s.SearchArtistName
+func (s *SearchObj) GetAccuracy(result *SearchResult) int {
 	respArtist := result.ArtistName
-
-	originTrack := s.SearchTrackName
 	respTrack := result.TrackName
-	if originArtist == respArtist {
-		if originTrack == respTrack {
-			return 1.0
+	if s.SearchArtistName == respArtist || s.ArtistNameOption == respArtist {
+		if s.SearchTrackName == respTrack || s.TrackNameOption == respTrack {
+			// 部分一致率みたいなのがあれば求めたい
+			// 最初から二文字目まで一致してればOK？？
+			return 100
 		}
-		return 0.9
+		// 変な文字を削除してどうなるかを判別したい(部分一致がどの程度か)
+		// 最初から二文字目まで一致してればOK？？
+		return 90
 	}
-	return 0.5
+	return 50
 }

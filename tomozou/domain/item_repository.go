@@ -3,6 +3,7 @@ package domain
 // webservoceaccountImpl が 構造体依存する
 type ItemRepository interface {
 	ReadArtistBySocialID(socialID string) (*Artist, error)
+	ReadArtistByArtistID(artistID int) (*Artist, error)
 
 	SaveArtist(Artist) (int, error)
 	SaveTrack(Track) (int, error)
@@ -15,6 +16,8 @@ type ItemRepository interface {
 
 	ReadTrackByTrackID(trackID int) (*Track, error)
 	ReadTrackBySocialTrackID(socialID string) (*Track, error)
+
+	ReadTrackWithArtistListByTrackID(trackID int) (*TrackWithArtistList, error)
 
 	ReadUserTrackTagByUserID(userID int) ([]UserTrackTagFull, error)
 	ReadUserTrackTagByTagName(tagName string) ([]UserTrackTagFull, error)

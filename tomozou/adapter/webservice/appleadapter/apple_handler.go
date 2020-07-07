@@ -10,7 +10,7 @@ import (
 type AppleHandler struct {
 	Client *applemusic.Client
 	DB     *gorm.DB
-	Config WebServiceConfig
+	Config *WebServiceConfig
 
 	UserRepository      domain.UserRepository
 	ItemRepository      domain.ItemRepository
@@ -30,8 +30,11 @@ type WebAPIToken struct {
 	RefreshToken string
 }
 
-func NewAppleHandlerByConfigToken(db *gorm.DB, config WebServiceConfig, itemChildRepository domain.ItemChildRepository) *AppleHandler {
-	//ctx := context.Background()
+func NewAppleHandlerByConfigToken(db *gorm.DB, config *WebServiceConfig, itemChildRepository domain.ItemChildRepository) *AppleHandler {
+	//ctx := context.Background
+	if config == nil {
+		config = NewWebServiceConfig()
+	}
 	tp := applemusic.Transport{Token: config.Token.AccessToken}
 	client := applemusic.NewClient(tp.Client())
 	return &AppleHandler{

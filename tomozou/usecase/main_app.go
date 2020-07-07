@@ -181,6 +181,43 @@ func (u UserProfileApplication) TrackTimeLine() ([]domain.UserTrackTagFull, erro
 	return nowplayingTrackTags, nil
 }
 
+func (u UserProfileApplication) TrackWebServiceTag(trackID int) (*[]domain.TrackWebServiceTag, error) {
+	// repository から　複数の trackwebservicetag を持ってきてそれをまとめて返却する機能
+	trackWebServiceTags, err := u.ItemChildRepository.ReadTrackWebServiceTagAllByTrackID(trackID)
+	if err != nil {
+		//return trackWebServiceTag, nil
+	}
+	return trackWebServiceTags, nil
+}
+
+func (u UserProfileApplication) GetArtistWithArtistWebServiceTagByTrackID(artistID int) (*domain.ArtistWithArtistWebServiceTags, error) {
+	// repository から　複数の trackwebservicetag を持ってきてそれをまとめて返却する機能
+	artist, _ := u.ItemRepository.ReadArtistByArtistID(artistID)
+	artistkWebServiceTags, err := u.ItemChildRepository.ReadArtistWebServiceTagAllByArtistID(artistID)
+	if artistkWebServiceTags != nil && err != nil {
+		return nil, err
+	}
+	artistWithTag := &domain.ArtistWithArtistWebServiceTags{
+		Artist:         *artist,
+		WebServiceTags: artistkWebServiceTags,
+	}
+	return artistWithTag, nil
+}
+
+func (u UserProfileApplication) GetTrackWithTrackWebServiceTagByTrackID(trackID int) (*domain.TrackWithTrackWebServiceTags, error) {
+	// repository から　複数の trackwebservicetag を持ってきてそれをまとめて返却する機能
+	track, _ := u.ItemRepository.ReadTrackByTrackID(trackID)
+	trackWebServiceTags, err := u.ItemChildRepository.ReadTrackWebServiceTagAllByTrackID(trackID)
+	if trackWebServiceTags != nil && err != nil {
+		return nil, err
+	}
+	trackWithTag := &domain.TrackWithTrackWebServiceTags{
+		Track:          *track,
+		WebServiceTags: trackWebServiceTags,
+	}
+	return trackWithTag, nil
+}
+
 /*
 // 実装開始　追加機能
 func (u UserProfileApplication) AddUserArtistTagComment(tagID int, comment string) (interface{}, error) {

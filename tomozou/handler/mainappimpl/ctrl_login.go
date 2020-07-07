@@ -1,10 +1,10 @@
 package mainappimpl
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 func (u *UserProfileApplicationImpl) Login(c *gin.Context) {
@@ -18,15 +18,13 @@ func (u *UserProfileApplicationImpl) Callback(c *gin.Context) {
 	// Login が成功したら UserCase の domain.WebSeerviceAccount を更新する
 	// => 更新してから RegistryUserを実行する
 	accessToken, err := u.Handler.Authenticator.Token(u.Handler.State, c.Request)
+	log.Info().Interface("SPOTIFY_TOKEN", accessToken.AccessToken).Msg("mainappimpl/ctrl_login.go")
 	if err != nil {
+		log.Debug().Interface("SPOTIFY_TOKEN_ERROR", err).Msg("mainappimpl/ctrl_login.go")
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	u.Handler.Client = u.Handler.Authenticator.NewClient(accessToken)
-	fmt.Println("accessToken")
-	fmt.Println(accessToken.AccessToken)
-
-	// ここで UseCase に切り替える
 	u.UseCase.WebServiceAccount = u.Handler.ConvertWebServiceAccountImpl()
 
 	existingUser, err := u.UseCase.CheckExistingUser()

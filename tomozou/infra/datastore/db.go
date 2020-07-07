@@ -21,6 +21,9 @@ func GormConn(driver string, dsn string) (*gorm.DB, error) {
 	if !db.HasTable(&domain.UserArtistTag{}) {
 		db.CreateTable(&domain.UserArtistTag{})
 	}
+	if !db.HasTable(&domain.ArtistWebServiceTag{}) {
+		db.CreateTable(&domain.ArtistWebServiceTag{})
+	}
 	if !db.HasTable(&domain.Track{}) {
 		db.CreateTable(&domain.Track{})
 	}

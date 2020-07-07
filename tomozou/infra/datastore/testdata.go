@@ -15,7 +15,7 @@ var TestArtist = domain.Artist{
 	Name:       "testMans",
 	SocialID:   "socialartist",
 	Image:      "https://i.scdn.co/image/ab6775700000ee85b2bd4f64bd8c250aedd13123",
-	Webservice: "spotofy",
+	Webservice: "soundcloud",
 }
 
 var TestTrack = domain.Track{
@@ -34,6 +34,11 @@ var TestUserArtistTag = domain.UserArtistTag{
 	ArtistName: "testMans",
 	URL:        "",
 	Image:      "",
+}
+
+var TestArtistWebServiceTag = domain.ArtistWebServiceTag{
+	ArtistID:       1,
+	SocialArtistID: "popopo",
 }
 
 var TestUserTrackTag = domain.UserTrackTag{

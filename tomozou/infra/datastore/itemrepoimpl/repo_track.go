@@ -18,3 +18,22 @@ func (repo *ItemRepositoryImpl) ReadTrackBySocialTrackID(socialID string) (*doma
 	repo.DB.Where("social_track_id = ?", socialID).Find(track)
 	return track, nil
 }
+
+func (repo *ItemRepositoryImpl) ReadTrackWithArtistListByTrackID(trackID int) (*domain.TrackWithArtistList, error) {
+	track := &domain.Track{}
+	repo.DB.Where("id = ?", trackID).Find(&track)
+
+	aID := track.ArtistIDsList()
+	artists := []domain.Artist{}
+	for _, i := range aID {
+		artist := domain.Artist{}
+		repo.DB.Where("id = ?", i).Find(&artist)
+		artists = append(artists, artist)
+	}
+
+	t := &domain.TrackWithArtistList{
+		Track:   track,
+		Artists: artists,
+	}
+	return t, nil
+}

@@ -4,6 +4,8 @@ import (
 	"time"
 	"tomozou/domain"
 	"tomozou/settings"
+
+	"github.com/rs/zerolog/log"
 )
 
 type Response struct {
@@ -68,6 +70,46 @@ func NewTrackTimeLineResponse(u *UserProfileApplicationImpl, trackTags []domain.
 		Length: len(trackTags),
 		Offset: 0,
 	}
+}
+
+type ConnectedTrackResponse struct {
+	ArtistName string                       `json:"artist_name"`
+	Artists    []domain.ArtistWebServiceTag `json:"artists"`
+	TrackName  string                       `json:"track_name"`
+	Tracks     []domain.TrackWebServiceTag  `json:"tracks"`
+	Image      string                       `json:"image"`
+}
+
+func NewConnectedTracksResponse(tags *[]domain.TrackWebServiceTag) *ConnectedTrackResponse {
+	resp := &ConnectedTrackResponse{}
+	for i := 0; i < len(*tags); i++ {
+		log.Info().Interface("CONNECTED_RESPONSE_WEBSERVICETAG_LIST", (*tags)[i]).Msg("mainappimpl/ShowAppleMusic ")
+		if (*tags)[i].SearchBy == "artist" {
+			//resp.Artists = append(resp.Artists, (*tags)[i])
+		} else if (*tags)[i].SearchBy == "track" {
+			resp.Tracks = append(resp.Tracks, (*tags)[i])
+		}
+	}
+	return resp
+}
+
+// Artisr の方だけ 画像と名前を保時できるようにしたい
+func NewConnectedTracksAndArtistResponse(tags *[]domain.TrackWebServiceTag, a *domain.ArtistWithArtistWebServiceTags) *ConnectedTrackResponse {
+	resp := &ConnectedTrackResponse{}
+	resp.ArtistName = a.Name
+	resp.Image = a.Image
+
+	for i := 0; i < len(*tags); i++ {
+		log.Info().Interface("CONNECTED_RESPONSE_WEBSERVICETAG_LIST", (*tags)[i]).Msg("mainappimpl/ShowAppleMusic ")
+		if (*tags)[i].SearchBy == "track" {
+			(*tags)[i].EmbedURL()
+			resp.Tracks = append(resp.Tracks, (*tags)[i])
+		}
+	}
+	for i := 0; i < len(*(a.WebServiceTags)); i++ {
+		resp.Artists = append(resp.Artists, (*a.WebServiceTags)[i])
+	}
+	return resp
 }
 
 func NewTrackResponse(u *UserProfileApplicationImpl, trackTag *domain.UserTrackTagFull) TrackResponse {

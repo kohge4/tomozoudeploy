@@ -16,8 +16,72 @@ type ConnectorApplicationImpl struct {
 	AppleHandler *appleadapter.AppleHandler
 
 	// *domain.ItemRepository を ポインタにすると失敗する
-	ItemRepository domain.ItemRepository
+	ItemRepository      domain.ItemRepository
+	ItemChildRepository domain.ItemChildRepository
 }
+
+/*
+func NewConnectorApplicationImpl(a *appleadapter.AppleHandler, iR domain.ItemRepository, iCR domain.ItemChildRepository) domain.WebServiceConnector {
+	return &ConnectorApplicationImpl{
+		AppleHandler:        a,
+		ItemRepository:      iR,
+		ItemChildRepository: iCR,
+	}
+}
+*/
+
+func (app *ConnectorApplicationImpl) CreateAppleTrackWebServiceTagByTrackID(c *gin.Context) {
+	// searchObj を adapter に流し込む役割
+	//word := c.Param("word")
+	param := c.Param("trackID")
+	trackID, _ := strconv.Atoi(param)
+	if trackID == 0 {
+		trackID = 1
+	}
+
+	track, _ := app.ItemRepository.ReadTrackByTrackID(trackID)
+
+	//track.ArtistName = "neveryoung+beach"
+	searchObj := &domain.SearchObj{
+		SearchKey:        "track",
+		SearchArtistName: track.ArtistName,
+		SearchTrackName:  track.TrackName,
+		ItemType:         "",
+		ItemID:           trackID,
+	}
+	tag, _ := app.ItemChildRepository.ReadTrackWebServiceTagByTrackID(trackID)
+	if tag != nil {
+		c.JSON(200, searchObj)
+		return
+	}
+
+	err := app.AppleHandler.SearchWebServiceItemAndCreateItemTag(searchObj)
+	if err != nil {
+		searchObj.Status = 401
+		c.JSON(401, searchObj)
+		return
+
+	}
+	c.JSON(200, searchObj)
+}
+
+func (app *ConnectorApplicationImpl) SearchAppleTrackAndCreateTrackWebServiceTag(trackID int) (*domain.SearchObj, error) {
+	track, _ := app.ItemRepository.ReadTrackByTrackID(trackID)
+	searchObj := &domain.SearchObj{
+		SearchKey:        "track",
+		SearchArtistName: track.ArtistName,
+		SearchTrackName:  track.TrackName,
+		ItemType:         "",
+		ItemID:           trackID,
+	}
+	err := app.AppleHandler.SearchWebServiceItemAndCreateItemTag(searchObj)
+	if err != nil {
+		return nil, err
+	}
+	return searchObj, nil
+}
+
+// 以下確認用
 
 func (app *ConnectorApplicationImpl) AppleConnectorDemo(c *gin.Context) {
 	// searchObj を adapter に流し込む役割
@@ -53,46 +117,4 @@ func (app *ConnectorApplicationImpl) AppleConnectorByTrack(c *gin.Context) {
 		c.String(401, err.Error())
 	}
 	c.JSON(200, searchObj)
-}
-
-func (app *ConnectorApplicationImpl) CreateAppleTrackWebServiceTagByTrackID(c *gin.Context) {
-	// searchObj を adapter に流し込む役割
-	//word := c.Param("word")
-	param := c.Param("trackID")
-	trackID, _ := strconv.Atoi(param)
-	if trackID == 0 {
-		trackID = 1
-	}
-
-	track, _ := app.ItemRepository.ReadTrackByTrackID(trackID)
-	//track.ArtistName = "neveryoung+beach"
-	searchObj := &domain.SearchObj{
-		SearchKey:        "track",
-		SearchArtistName: track.ArtistName,
-		SearchTrackName:  track.TrackName,
-		ItemType:         "",
-		ItemID:           trackID,
-	}
-
-	err := app.AppleHandler.SearchWebServiceItemAndCreateItemTag(searchObj)
-	if err != nil {
-		c.String(401, err.Error())
-	}
-	c.JSON(200, searchObj)
-}
-
-func (app *ConnectorApplicationImpl) SearchAppleTrackAndCreateTrackwevServiceTag(trackID int) (*domain.SearchObj, error) {
-	track, _ := app.ItemRepository.ReadTrackByTrackID(trackID)
-	searchObj := &domain.SearchObj{
-		SearchKey:        "track",
-		SearchArtistName: track.ArtistName,
-		SearchTrackName:  track.TrackName,
-		ItemType:         "",
-		ItemID:           trackID,
-	}
-	err := app.AppleHandler.SearchWebServiceItemAndCreateItemTag(searchObj)
-	if err != nil {
-		return nil, err
-	}
-	return searchObj, nil
 }

@@ -3,6 +3,7 @@ package mainappimpl
 import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 
+	"tomozou/adapter/webservice/appleadapter"
 	"tomozou/adapter/webservice/spotifyadapter"
 	"tomozou/usecase"
 )
@@ -10,7 +11,8 @@ import (
 type UserProfileApplicationImpl struct {
 	UseCase *usecase.UserProfileApplication
 
-	Handler        *spotifyadapter.SpotifyHandler
-	SecondHandler  *spotifyadapter.SpotifyHandler
+	Handler *spotifyadapter.SpotifyHandler
+	//Connector      connectorappimpl.ConnectorApplicationImpl
+	Connector      *appleadapter.AppleHandler
 	AuthMiddleware *jwt.GinJWTMiddleware
 }
